@@ -59,7 +59,8 @@ export default defineComponent({
     /* Adjust border-radius to match inner part */
     overflow: hidden;
     position: relative;
-    background-color: #096192;
+    background: #76EDED;
+    background: linear-gradient(135deg, #76EDED, #414a4c);
 
 }
 
