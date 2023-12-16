@@ -1,32 +1,26 @@
 <template>
     <div class="screen-container">
-      <div class="iphone">
-        <div class="iphone-inner">
-          <div class="iphone-bottom">
-            <router-link class="iphone-button" :to="{ name: 'Home' }">
-              <i class="fa fa-home" aria-hidden="true"></i>
-              Home
-            </router-link>
-            <router-link class="iphone-button" :to="{ name: 'Usage' }">
-              <i class="fa fa-bar-chart"></i>
-              Usage
-            </router-link>
-            <router-link class="iphone-button" :to="{ name: 'Advice' }">
-              <i class="fa fa-lightbulb-o"></i>
-              Advice
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </div>
-  </template>
+        <div class="iphone">
+            <div class="iphone-inner">
+                <!-- iPhone content -->
+                <router-view></router-view>
 
+                <!-- Bottom navigation -->
+                <div class="iphone-bottom">
+                    <router-link to="/" class="iphone-button">Home</router-link>
+                    <router-link to="/usage" class="iphone-button">Usage</router-link>
+                    <router-link to="/advice" class="iphone-button">Advice</router-link>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 <script lang="ts">
 import { defineComponent } from "vue";
 import { RouterLink } from "vue-router";
 
 export default defineComponent({
-  components: { RouterLink },
+    components: { RouterLink },
 });
 </script>
 
@@ -89,5 +83,4 @@ export default defineComponent({
     width: 24px;
     height: 24px;
     margin-bottom: 4px;
-}
-</style>
+}</style>
