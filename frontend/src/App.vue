@@ -7,9 +7,9 @@
 
                 <!-- Bottom navigation -->
                 <div class="iphone-bottom">
-                    <router-link to="/" class="iphone-button router-link">Home</router-link>
-                    <router-link to="/usage" class="iphone-button router-link">Usage</router-link>
-                    <router-link to="/advice" class="iphone-button router-link">Advice</router-link>
+                    <router-link to="/" class="iphone-button router-link"><font-awesome-icon icon="home" /></router-link>
+                    <router-link to="/usage" class="iphone-button router-link"><font-awesome-icon icon="line-chart" /></router-link>
+                    <router-link to="/advice" class="iphone-button router-link"><font-awesome-icon icon="info-circle" /></router-link>
                 </div>
             </div>
         </div>
@@ -18,9 +18,10 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { RouterLink } from "vue-router";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 export default defineComponent({
-    components: { RouterLink },
+    components: { RouterLink, FontAwesomeIcon },
 });
 </script>
 
@@ -30,7 +31,7 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
     height: 100vh;
-    
+    background-color: #096192;
     /* Use full viewport height */
 }
 
@@ -52,7 +53,7 @@ export default defineComponent({
 .iphone-inner {
     width: calc(100% - 20px);
     height: calc(100% - 20px);
-    border: 5px solid #ccc;
+    border: 5px solid #232b2b;
     /* Add inner border */
     border-radius: 29px;
     /* Adjust border-radius to match inner part */
