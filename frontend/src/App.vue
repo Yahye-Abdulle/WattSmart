@@ -38,7 +38,7 @@ export default defineComponent({
 .iphone {
     width: 375px;
     /* iPhone X width */
-    height: 812px;
+    height:667px;
     /* iPhone X height */
     background-color: #fff;
     border-radius: 39px;
