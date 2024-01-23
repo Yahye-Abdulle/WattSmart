@@ -33,57 +33,103 @@
                 <!-- List of appliances -->
                 <div class="appliance-container">
                     <div class="appliance-list">
-                        <!-- Appliance 1 -->
+
                         <div class="appliance-item">
                             <div class="appliance-details">
                                 <span class="appliance-name">Microwave</span>
-                                <span class="appliance-wattage">150W</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '40%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Appliance 2 -->
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Washing Machine</span>
-                                <span class="appliance-wattage">100W</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '20%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Appliance 3 -->
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Dishwasher</span>
-                                <span class="appliance-wattage">200W</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '60%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Appliance 4 -->
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">TVs</span>
-                                <span class="appliance-wattage">50W</span>
+                                <span class="appliance-wattage">1000W / £1.50</span>
                                 <div class="progress-bar-container">
                                     <div class="progress-bar" :style="{ width: '10%' }"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Appliance 5 -->
                         <div class="appliance-item">
                             <div class="appliance-details">
-                                <span class="appliance-name">Dryer</span>
-                                <span class="appliance-wattage">120W</span>
+                                <span class="appliance-name">Refridgerator</span>
+                                <span class="appliance-wattage">300W / £0.45</span>
                                 <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '70%' }"></div>
+                                    <div class="progress-bar" :style="{ width: '3%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Air Con</span>
+                                <span class="appliance-wattage">2000W / £3.00</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '20%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">TVs</span>
+                                <span class="appliance-wattage">600W / £0.90</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '6%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Washing Machine</span>
+                                <span class="appliance-wattage">1500W / £2.25</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '15%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Dishwasher</span>
+                                <span class="appliance-wattage">800W / £1.20</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '8%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Electric Oven</span>
+                                <span class="appliance-wattage">1200W / £1.80</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '12%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Ceiling Fan</span>
+                                <span class="appliance-wattage">500W / £0.75</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '5%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Toaster</span>
+                                <span class="appliance-wattage">300W / £0.45</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '3%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="appliance-item">
+                            <div class="appliance-details">
+                                <span class="appliance-name">Blender</span>
+                                <span class="appliance-wattage">200W / £0.30</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" :style="{ width: '2%' }"></div>
                                 </div>
                             </div>
                         </div>
@@ -274,6 +320,7 @@ export default defineComponent({
 .appliance-item {
     margin-bottom: 5px;
     color: #fff;
+    padding-top: 3px;
 }
 
 .appliance-wattage {
