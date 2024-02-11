@@ -1,7 +1,6 @@
 <template>
     <div class="iphone-container">
         <!-- Your Home Page Content -->
-
         <div class="home-content">
             <!-- BANNER AT TOP -->
             <div class="top-banner">
@@ -18,7 +17,6 @@
                         </linearGradient>
                     </defs>
                 </svg>
-
                 <!-- IMAGE BANNER OVERLAY -->
                 <div class="banner-overlay">
                     <img src="../assets/w4.png" alt="Banner Image">
@@ -27,13 +25,11 @@
                     </div>
                 </div>
             </div>
-
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
                 <!-- List of appliances -->
                 <div class="appliance-container">
                     <div class="appliance-list">
-
                         <div class="appliance-item">
                             <div class="appliance-details">
                                 <span class="appliance-name">Microwave</span>

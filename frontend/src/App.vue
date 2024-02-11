@@ -3,7 +3,8 @@
         <div class="iphone">
             <div class="iphone-inner">
                 <!-- iPhone content -->
-                <router-view></router-view>
+                <router-view>
+                </router-view>
 
                 <!-- Bottom navigation -->
                 <div class="iphone-bottom">
