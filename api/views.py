@@ -8,6 +8,12 @@ from .models import CustomUser
 from django.contrib.auth.hashers import make_password
 
 
+def check_auth(request) -> JsonResponse:
+    if request.user.is_authenticated:
+        return JsonResponse({'authenticated': True})
+    else:
+        return JsonResponse({'authenticated': False})
+
 def main_spa(request: HttpRequest) -> HttpResponse:
     return render(request, 'api/spa/index.html', {})
 
