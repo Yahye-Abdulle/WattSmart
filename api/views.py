@@ -3,8 +3,9 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout, authenticate
-from .forms import RegistrationForm, CustomAuthenticationForm
+from .forms import RegistrationForm, CustomAuthenticationForm, SignUpForm
 from .models import CustomUser
+from django.contrib.auth.hashers import make_password
 
 
 def main_spa(request: HttpRequest) -> HttpResponse:
@@ -31,11 +32,59 @@ def logout_view(request):
 
 def signup_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')  # Redirect to the home page or any other desired page
-    else:
-        form = RegistrationForm()
-    return render(request, 'signup.html', {'form': form})
+        if "signup" in request.POST:
+            try:
+                # Get values from request.POST
+                first_name = request.POST.get('first_name')
+                last_name = request.POST.get('last_name')
+                email = request.POST.get('email')
+                password = request.POST.get('password')
+                age = request.POST.get('age')
+
+                # Ensure all required fields are provided
+                if not (first_name and last_name and email and password and age):
+                    raise ValueError("All required fields must be provided.")
+
+                # Hash the password
+                hashed_password = make_password(password)
+
+                # Create a new CustomUser
+                user = CustomUser.objects.create(
+                    username=email,  # You can use email as the username
+                    password=hashed_password,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    age=age
+                )
+
+                # Log in the user
+                login(request, user)
+
+                # Redirect to a success page or wherever you want
+                return redirect('/')
+
+            except Exception as e:
+                # Handle exceptions, log the error, or return an error response
+                print(f"Error during signup: {e}")
+                return HttpResponse("Error during signup. Please try again.")
+        elif "login" in request.POST:
+            email = request.POST.get('email')  # Assuming 'email' is used for the username
+            password = request.POST.get('password')
+            user = authenticate(request, username=email, password=password)
+
+            if user is not None:
+                # Log in the user
+                login(request, user)
+
+                # Redirect to a success page or wherever you want
+                user_profile = CustomUser.objects.get(username=email)
+                # return redirect('/?email=' + user_profile.email)
+                return redirect('/')
+            else:
+                # Handle invalid login credentials
+                error_message = "Invalid login credentials. Please try again."
+                return render(request, 'login.html', {'error_message': error_message})
+
+
+    # return render(request, 'signup.html', {'form': form})
