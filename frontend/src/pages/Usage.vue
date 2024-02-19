@@ -24,6 +24,7 @@
                         <button class="add-appliance-button">Add Appliance</button>
                     </div>
                 </div>
+                
             </div>
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
@@ -157,6 +158,26 @@ export default defineComponent({
         .catch(error => {
             console.error('Error:', error);
         });
+    },
+    addAppliance_POST() {
+        fetch('/add_appliance/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                appliance: 'Microwave',
+                wattage: 1000,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
     }
   },
   mounted() {

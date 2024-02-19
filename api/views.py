@@ -13,6 +13,32 @@ def check_auth(request) -> JsonResponse:
         return JsonResponse({'authenticated': True})
     else:
         return JsonResponse({'authenticated': False})
+    
+def get_appliances_for_user(request: HttpRequest) -> JsonResponse:
+    if request.user.is_authenticated:
+        appliances = request.user.appliances.all()
+        return JsonResponse({'appliances': list(appliances.values())})
+    else:
+        return JsonResponse({'error': 'User is not authenticated.'}, status=401)
+
+def add_appliance(request: HttpRequest) -> JsonResponse:
+    if request.user.is_authenticated:
+        name = request.POST.get('email')
+        wattage = request.POST.get('wattage')
+        if name and wattage:
+            appliance = request.user.appliances.create(name=name, wattage=wattage)
+            return JsonResponse({'appliance': {'name': appliance.name, 'wattage': appliance.wattage}})
+        else:
+            return JsonResponse({'error': 'Name and wattage must be provided.'}, status=400)
+    else:
+        return JsonResponse({'error': 'User is not authenticated.'}, status=401)
+
+def get_energy_usage_for_user(request: HttpRequest) -> JsonResponse:
+    if request.user.is_authenticated:
+        energy_usage = request.user.energy_usage.all()
+        return JsonResponse({'energy_usage': list(energy_usage.values())})
+    else:
+        return JsonResponse({'error': 'User is not authenticated.'}, status=401)
 
 def main_spa(request: HttpRequest) -> HttpResponse:
     return render(request, 'api/spa/index.html', {})
