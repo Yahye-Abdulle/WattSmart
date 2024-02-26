@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpRequest, JsonResponse
+import json
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -6,6 +7,7 @@ from django.contrib.auth import login, logout, authenticate
 from .forms import RegistrationForm, CustomAuthenticationForm, SignUpForm
 from .models import CustomUser
 from django.contrib.auth.hashers import make_password
+from django.views.decorators.csrf import csrf_exempt
 
 
 def check_auth(request) -> JsonResponse:
@@ -21,10 +23,17 @@ def get_appliances_for_user(request: HttpRequest) -> JsonResponse:
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
 
+@csrf_exempt
 def add_appliance(request: HttpRequest) -> JsonResponse:
+    print('yes')
     if request.user.is_authenticated:
-        name = request.POST.get('email')
-        wattage = request.POST.get('wattage')
+        try:
+            data = json.loads(request.body)
+            name = data.get('name')
+            wattage = data.get('wattage')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+        
         if name and wattage:
             appliance = request.user.appliances.create(name=name, wattage=wattage)
             return JsonResponse({'appliance': {'name': appliance.name, 'wattage': appliance.wattage}})
@@ -32,7 +41,7 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
             return JsonResponse({'error': 'Name and wattage must be provided.'}, status=400)
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
-
+    
 def get_energy_usage_for_user(request: HttpRequest) -> JsonResponse:
     if request.user.is_authenticated:
         energy_usage = request.user.energy_usage.all()

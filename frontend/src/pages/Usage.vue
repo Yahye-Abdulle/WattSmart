@@ -21,112 +21,27 @@
                 <div class="banner-overlay">
                     <img src="../assets/w4.png" alt="Banner Image">
                     <div class="text-overlay">
-                        <button class="add-appliance-button">Add Appliance</button>
+                        <button class="add-appliance-button" @click="addAppliance_POST">Add Appliance</button>
                     </div>
                 </div>
-                
+
             </div>
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
                 <!-- List of appliances -->
                 <div class="appliance-container">
                     <div class="appliance-list">
-                        <div class="appliance-item">
+                        <!-- Use v-for to iterate over the appliances array -->
+                        <div v-for="(appliance, index) in appliances" :key="index" class="appliance-item">
                             <div class="appliance-details">
-                                <span class="appliance-name">Microwave</span>
-                                <span class="appliance-wattage">1000W / £1.50</span>
+                                <!-- Dynamic appliance name and wattage based on the array -->
+                                <span class="appliance-name">{{ appliance.name }}</span>
+                                <span class="appliance-wattage">{{ appliance.wattage }}W / £{{
+                                    calculateCost(appliance.wattage) }}</span>
                                 <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '10%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Refridgerator</span>
-                                <span class="appliance-wattage">300W / £0.45</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '3%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Air Con</span>
-                                <span class="appliance-wattage">2000W / £3.00</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '20%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">TVs</span>
-                                <span class="appliance-wattage">600W / £0.90</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '6%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Washing Machine</span>
-                                <span class="appliance-wattage">1500W / £2.25</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '15%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Dishwasher</span>
-                                <span class="appliance-wattage">800W / £1.20</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '8%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Electric Oven</span>
-                                <span class="appliance-wattage">1200W / £1.80</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '12%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Ceiling Fan</span>
-                                <span class="appliance-wattage">500W / £0.75</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '5%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Toaster</span>
-                                <span class="appliance-wattage">300W / £0.45</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '3%' }"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="appliance-item">
-                            <div class="appliance-details">
-                                <span class="appliance-name">Blender</span>
-                                <span class="appliance-wattage">200W / £0.30</span>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" :style="{ width: '2%' }"></div>
+                                    <!-- Use a dynamic style for the progress bar width -->
+                                    <div class="progress-bar"
+                                        :style="{ width: calculateProgressBarWidth(appliance.wattage) }"></div>
                                 </div>
                             </div>
                         </div>
@@ -144,45 +59,80 @@ export default defineComponent({
     data() {
         return {
             title: "Home",
+            appliances: [] as { name: string; wattage: number }[],
+            csrfToken: '',
         }
     },
     methods: {
-    checkAuthStatus() {
-        fetch('/check_auth/')
-        .then(response => response.json())
-        .then(data => {
-            if (!data.authenticated) {
-                window.location.href = '/login/';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    },
-    addAppliance_POST() {
-        fetch('/add_appliance/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                appliance: 'Microwave',
-                wattage: 1000,
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        calculateCost(wattage: number) {
+        // Add your cost calculation logic here
+        return (wattage / 1000) * 1.5; // Example calculation (adjust as needed)
+        },
+        // Function to calculate progress bar width based on wattage
+        calculateProgressBarWidth(wattage: number) {
+        // Calculate the width based on your desired logic
+        return `${(wattage / 2000) * 100}%`; // Example calculation (adjust as needed)
+        },
+        checkAuthStatus() {
+            fetch('/check_auth/')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        window.location.href = '/login/';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
+        addAppliance_POST() {
+            console.log('Add Appliance');
 
+            const csrfToken = "{{ csrf_token }}";
+
+            fetch('/add_appliance/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    name: 'Microwave',
+                    wattage: 1000,
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
+        },
+        getAppliance_USER() {
+            fetch('/get_appliances/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    this.appliances = data.appliances;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
+        getCookie(name: string) {
+            // Function to get the value of a cookie by name
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts && parts.length === 2) return parts.pop()?.split(';').shift();
+        },
+    },
+    mounted() {
+        this.checkAuthStatus();
+        this.getAppliance_USER();
+        this.csrfToken = this.getCookie('csrftoken') ?? '';
     }
-  },
-  mounted() {
-    this.checkAuthStatus();
-  }
 })
 </script>
   
@@ -318,7 +268,8 @@ export default defineComponent({
     width: 200px;
     height: 50px;
     border-radius: 20px;
-    background: #E3652F;;
+    background: #E3652F;
+    ;
     color: #fff;
     font-size: 20px;
     font-weight: 600;
@@ -363,5 +314,4 @@ export default defineComponent({
     font-size: 13px;
     font-weight: 600;
     line-height: normal;
-}
-</style>
+}</style>

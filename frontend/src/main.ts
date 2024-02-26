@@ -13,6 +13,12 @@ library.add(fas);
 
 const app = createApp(App)
 
+app.config.globalProperties.$getCsrfToken = function () {
+    const value = `; ${document.cookie}`;
+    const parts = value.split('; csrftoken=');
+    return parts.length === 2 ? parts.pop()?.split(';').shift() ?? '' : '';
+};
+
 app.use(router)
 
 app.mount('#app')
