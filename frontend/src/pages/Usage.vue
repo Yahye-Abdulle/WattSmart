@@ -42,6 +42,7 @@ const closeConfirm = () => {
                 </div>
 
             </div>
+            <ModalConfirm v-if="show" @close="closeConfirm"></ModalConfirm>
             
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
@@ -64,7 +65,6 @@ const closeConfirm = () => {
                         </div>
                     </div>
                 </div>
-                <ModalConfirm v-if="show" @close="closeConfirm"></ModalConfirm>
             </div>
         </div>
     </div>
@@ -85,7 +85,10 @@ export default defineComponent({
     methods: {
         calculateCost(wattage: number) {
         // Add your cost calculation logic here
-        return (wattage / 1000) * 1.5; // Example calculation (adjust as needed)
+        const cost = (wattage / 1000) * 1.5;
+
+        // Round to two decimal places
+        return Number(cost.toFixed(2));
         },
         // Function to calculate progress bar width based on wattage
         calculateProgressBarWidth(wattage: number) {

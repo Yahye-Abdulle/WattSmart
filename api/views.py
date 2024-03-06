@@ -8,7 +8,7 @@ from .forms import RegistrationForm, CustomAuthenticationForm, SignUpForm
 from .models import CustomUser
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
-
+import random
 
 def check_auth(request) -> JsonResponse:
     if request.user.is_authenticated:
@@ -30,7 +30,11 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
         try:
             data = json.loads(request.body)
             name = data.get('name')
-            wattage = data.get('wattage')
+            # generate a random wattage
+            random_wattage = random.randint(100, 1000)
+
+            # Round the wattage to the nearest multiple of 100
+            wattage = round(random_wattage, -2)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
         
