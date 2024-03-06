@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import ModalConfirm from "../components/ModalConfirm.vue";
+import { ref} from "vue";
+
+const show = ref(false);
+
+const openConfirm = () => {
+  show.value = true;
+};
+
+const closeConfirm = () => {
+  show.value = false;
+};
+
+</script>
+
 <template>
     <div class="iphone-container">
         <!-- Your Home Page Content -->
@@ -21,11 +37,12 @@
                 <div class="banner-overlay">
                     <img src="../assets/w4.png" alt="Banner Image">
                     <div class="text-overlay">
-                        <button class="add-appliance-button" @click="addAppliance_POST">Add Appliance</button>
+                        <button class="add-appliance-button" @click="openConfirm">Add Appliance</button>
                     </div>
                 </div>
 
             </div>
+            
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
                 <!-- List of appliances -->
@@ -47,6 +64,7 @@
                         </div>
                     </div>
                 </div>
+                <ModalConfirm v-if="show" @close="closeConfirm"></ModalConfirm>
             </div>
         </div>
     </div>
@@ -61,6 +79,7 @@ export default defineComponent({
             title: "Home",
             appliances: [] as { name: string; wattage: number }[],
             csrfToken: '',
+            totalWatts: 0,
         }
     },
     methods: {
@@ -70,8 +89,8 @@ export default defineComponent({
         },
         // Function to calculate progress bar width based on wattage
         calculateProgressBarWidth(wattage: number) {
-        // Calculate the width based on your desired logic
-        return `${(wattage / 2000) * 100}%`; // Example calculation (adjust as needed)
+            // Calculate the width based on your desired logic
+            return `${(wattage / this.totalWatts) * 100}%`; // Example calculation (adjust as needed)
         },
         checkAuthStatus() {
             fetch('/check_auth/')
@@ -85,37 +104,40 @@ export default defineComponent({
                     console.error('Error:', error);
                 });
         },
-        addAppliance_POST() {
-            console.log('Add Appliance');
+        // addAppliance_POST() {
+        //     console.log('Add Appliance');
 
-            const csrfToken = "{{ csrf_token }}";
+        //     const csrfToken = "{{ csrf_token }}";
 
-            fetch('/add_appliance/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                },
-                body: JSON.stringify({
-                    name: 'Microwave',
-                    wattage: 1000,
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+        //     fetch('/add_appliance/', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'X-CSRFToken': csrfToken,
+        //         },
+        //         body: JSON.stringify({
+        //             name: 'Microwave',
+        //             wattage: 1000,
+        //         })
+        //     })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             console.log('Success:', data);
+        //         })
+        //         .catch((error) => {
+        //             console.error('Error:', error);
+        //         });
 
-        },
+        // },
         getAppliance_USER() {
             fetch('/get_appliances/')
                 .then(response => response.json())
                 .then(data => {
                     console.log('Success:', data);
                     this.appliances = data.appliances;
+
+                    // Calculate total watts
+                    this.totalWatts = this.appliances.reduce((total, appliance) => total + appliance.wattage, 0);
                 })
                 .catch(error => {
                     console.error('Error:', error);
