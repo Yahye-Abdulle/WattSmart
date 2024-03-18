@@ -85,7 +85,7 @@ export default defineComponent({
     methods: {
         calculateCost(wattage: number) {
         // Add your cost calculation logic here
-        const cost = (wattage / 1000) * 1.5;
+        const cost = wattage * 0.15;
 
         // Round to two decimal places
         return Number(cost.toFixed(2));

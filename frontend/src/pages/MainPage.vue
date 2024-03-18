@@ -25,7 +25,7 @@
             <br>
             <span class="usage-count">Currrent Usage</span>
             <br>
-            <span class="usage-value"><span class="usage-value-number">{{energyUsage}}</span>W</span>
+            <span class="usage-value"><span class="usage-value-number">{{energyUsage}}</span>W | £{{ costPrice }}</span>
           </div>
         </div>
       </div>
@@ -57,13 +57,14 @@ export default defineComponent({
     const labels = [];
 
     // Generate labels for the past 6 months from the current month
-    for (let i = 5; i >= 0; i--) {
+    for (let i = 6; i >= 1; i--) {
       const monthIndex = (currentMonth - i + 12) % 12;
       labels.push(this.getMonthName(monthIndex));
     }
 
     return {
       energyUsage: 0,
+      costPrice: 0,
       chartData: {
         labels: labels,
         datasets: [
@@ -142,16 +143,18 @@ export default defineComponent({
     generateGasData() {
       // Assumed gas usage data for each month (replace with real data)
       const gasUsage = [80, 75, 70, 85, 80, 75, 90, 85, 80, 75, 70, 85];
-      return gasUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+      // return gasUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+      return gasUsage.map(wattage => this.calculateCost(wattage));
     },
     generateElectricityData() {
       // Assumed electricity usage data for each month (replace with real data)
       const electricityUsage = [200, 210, 220, 215, 205, 210, 200, 215, 220, 225, 230, 220];
-      return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+      // return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+      return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
     calculateCost(wattage: any) {
       // Add your cost calculation logic here
-      const cost = (wattage / 1000) * 1.5; // Assuming $1.5 per kWh
+      const cost = wattage * 0.15; // Assuming $1.5 per kWh
 
       // Round to two decimal places
       return Number(cost.toFixed(2));
@@ -185,6 +188,7 @@ export default defineComponent({
                     const appliances = data.appliances;
 
                     this.energyUsage = appliances.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
+                    this.costPrice = Number(((this.energyUsage / 1000) * 1.5).toFixed(2));
                 })
                 .catch(error => {
                     console.error('Error:', error);
