@@ -35,6 +35,10 @@
         <!-- List of appliances -->
         <h5 class="last6">LAST 6 MONTHS</h5>
         <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+
+        <div class="applianceMostUsage"></div>
+
+        <div class="annualReview"></div>
       </div>
     </div>
   </div>
@@ -65,6 +69,12 @@ export default defineComponent({
     return {
       energyUsage: 0,
       costPrice: 0,
+      mostUsedAppliance: '',
+      annualReviewData: {
+        electricity: 0,
+        gas: 0,
+        annualCost: 0
+      },
       chartData: {
         labels: labels,
         datasets: [
@@ -335,6 +345,27 @@ export default defineComponent({
   margin-top: 20px;
   margin-left: 20px;
   text-align: center;
+}
+.applianceMostUsage {
+  width: calc(100% - 5%); /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+  border: 2px solid black; /* Border */
+  background-color: rgba(255, 255, 255, 0.5); /* Background color */
+  margin: 25px auto; /* Center horizontally */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.annualReview {
+  width: calc(100% - 5%); /* Adjust width as needed */
+  height: 150px; /* Adjust height as needed */
+  border: 2px solid black; /* Border */
+  background-color: rgba(255, 255, 255, 0.5); /* Background color */
+  margin: 10px auto; /* Center horizontally */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>: { dataset: { label: string; }; parsed: { y: number | null; }; }: string | number: number: { dataset: { label:
 string; }; parsed: { y: number | null; }; }: string | number: number
