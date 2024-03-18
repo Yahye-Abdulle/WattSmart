@@ -28,4 +28,5 @@ urlpatterns = [
     path('check_auth/', views.check_auth, name='check_auth'),
     path('get_appliances/', views.get_appliances_for_user, name='get_appliances'),
     path('add_appliance/', views.add_appliance, name='add_appliance'),
+    path('get_energy_usage_for_user/', views.get_energy_usage_for_user, name='get_energy_usage_for_user'),
 ]

@@ -25,7 +25,7 @@
             <br>
             <span class="usage-count">Currrent Usage</span>
             <br>
-            <span class="usage-value"><span class="usage-value-number">250</span>W</span>
+            <span class="usage-value"><span class="usage-value-number">{{energyUsage}}</span>W</span>
           </div>
         </div>
       </div>
@@ -33,6 +33,7 @@
       <!-- MAIN CONTENT -->
       <div class="bottom-banner">
         <!-- List of appliances -->
+        <h5 class="last6">LAST 6 MONTHS</h5>
         <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
       </div>
     </div>
@@ -62,6 +63,7 @@ export default defineComponent({
     }
 
     return {
+      energyUsage: 0,
       chartData: {
         labels: labels,
         datasets: [
@@ -104,7 +106,7 @@ export default defineComponent({
         plugins: {
           tooltip: {
             callbacks: {
-              label: function (context) {
+              label: function (context: { dataset: { label: string; }; parsed: { y: number | null; }; }) {
                 let label = context.dataset.label || '';
 
                 if (label) {
@@ -133,21 +135,21 @@ export default defineComponent({
     }
   },
   methods: {
-    getMonthName(monthIndex) {
+    getMonthName(monthIndex: any) {
       const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
       return monthNames[monthIndex];
     },
-    generateGasData(currentMonth) {
-  // Assumed gas usage data for each month (replace with real data)
-  const gasUsage = [80, 75, 70, 85, 80, 75, 90, 85, 80, 75, 70, 85];
-  return gasUsage.map(wattage => this.calculateCost(wattage)).map(cost => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
-},
-generateElectricityData(currentMonth) {
-  // Assumed electricity usage data for each month (replace with real data)
-  const electricityUsage = [200, 210, 220, 215, 205, 210, 200, 215, 220, 225, 230, 220];
-  return electricityUsage.map(wattage => this.calculateCost(wattage)).map(cost => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
-},
-    calculateCost(wattage) {
+    generateGasData() {
+      // Assumed gas usage data for each month (replace with real data)
+      const gasUsage = [80, 75, 70, 85, 80, 75, 90, 85, 80, 75, 70, 85];
+      return gasUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+    },
+    generateElectricityData() {
+      // Assumed electricity usage data for each month (replace with real data)
+      const electricityUsage = [200, 210, 220, 215, 205, 210, 200, 215, 220, 225, 230, 220];
+      return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+    },
+    calculateCost(wattage: any) {
       // Add your cost calculation logic here
       const cost = (wattage / 1000) * 1.5; // Assuming $1.5 per kWh
 
@@ -175,10 +177,23 @@ generateElectricityData(currentMonth) {
         .catch(error => {
           console.error('Error:', error);
         });
-    }
+    },
+    getAppliance_USER() {
+            fetch('/get_appliances/')
+                .then(response => response.json())
+                .then(data => {
+                    const appliances = data.appliances;
+
+                    this.energyUsage = appliances.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        },
   },
   mounted() {
     this.checkAuthStatus();
+    this.getAppliance_USER();
   }
 })
 </script>
@@ -306,4 +321,16 @@ generateElectricityData(currentMonth) {
   background: linear-gradient(180deg, rgba(227, 101, 47, 0.90) 0%, rgba(255, 255, 255, 0.00) 75%);
   box-shadow: 0px -15px 26px 0px rgba(0, 0, 0, 0.03);
 }
-</style>
+
+.last6 {
+  color: #FFF;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  margin-top: 20px;
+  margin-left: 20px;
+  text-align: center;
+}
+</style>: { dataset: { label: string; }; parsed: { y: number | null; }; }: string | number: number: { dataset: { label:
+string; }; parsed: { y: number | null; }; }: string | number: number

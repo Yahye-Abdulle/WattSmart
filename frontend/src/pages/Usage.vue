@@ -321,6 +321,12 @@ export default defineComponent({
     max-width: 350px;
     margin-left: 10px;
     overflow-y: auto;
+    max-height: 450px; /* Set a fixed height for scrolling */
+}
+
+/* Hide scrollbar */
+.appliance-container::-webkit-scrollbar {
+    width: 0; /* Set the width of the scrollbar to zero */
 }
 
 .appliance-list {
