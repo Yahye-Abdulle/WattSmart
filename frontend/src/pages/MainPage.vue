@@ -142,13 +142,13 @@ export default defineComponent({
     },
     generateGasData() {
       // Assumed gas usage data for each month (replace with real data)
-      const gasUsage = [80, 75, 70, 85, 80, 75, 90, 85, 80, 75, 70, 85];
+      const gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85];
       // return gasUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
       return gasUsage.map(wattage => this.calculateCost(wattage));
     },
     generateElectricityData() {
       // Assumed electricity usage data for each month (replace with real data)
-      const electricityUsage = [200, 210, 220, 215, 205, 210, 200, 215, 220, 225, 230, 220];
+      const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
       // return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
       return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
