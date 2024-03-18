@@ -33,11 +33,7 @@
       <!-- MAIN CONTENT -->
       <div class="bottom-banner">
         <!-- List of appliances -->
-        <Bar
-          id="my-chart-id"
-          :options="chartOptions"
-          :data="chartData"
-        />
+        <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
       </div>
     </div>
   </div>
@@ -56,78 +52,129 @@ export default defineComponent({
   components: { Bar },
   data() {
     const today = new Date();
-  const currentMonth = today.getMonth();
-  const labels = [];
-  const datasets = [{
-    label: 'Average Watts Used',
-    data: this.generateAverageWattsData(currentMonth),
-    backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)'
-      ],
-    borderColor: 'rgba(54, 162, 235, 1)',
-    borderWidth: 1
-  }];
+    const currentMonth = today.getMonth();
+    const labels = [];
 
-    // Generate labels for the past 6 months from March
+    // Generate labels for the past 6 months from the current month
     for (let i = 5; i >= 0; i--) {
-      const monthIndex = (currentMonth - i + 12) % 12
-      labels.push(this.getMonthName(monthIndex))
+      const monthIndex = (currentMonth - i + 12) % 12;
+      labels.push(this.getMonthName(monthIndex));
     }
 
     return {
-      title: "Home",
       chartData: {
         labels: labels,
-        datasets: datasets
+        datasets: [
+          {
+            label: 'Electric',
+            data: this.generateElectricityData(currentMonth),
+            backgroundColor: 'rgba(227, 101, 47, 0.90)', // Red color for gas
+            stack: 'stack1'
+          },
+          {
+            label: 'Gas',
+            data: this.generateGasData(currentMonth),
+            backgroundColor: 'rgba(0, 69, 107, 0.90)', // Blue color for electricity
+            stack: 'stack1'
+          }
+        ]
       },
       chartOptions: {
-        responsive: true
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: {
+              color: 'rgba(227, 101, 47, 0.90)', // Set x-axis text color to black
+              font: {
+                weight: 'bold' // Set legend text font weight to bold
+              }
+            }
+          },
+          y: {
+            stacked: true,
+            ticks: {
+              color: 'rgba(0, 69, 107, 0.90)',
+              font: {
+                weight: 'bold' // Set legend text font weight to bold
+              } // Set x-axis text color to black
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || '';
+
+                if (label) {
+                  label += ': ';
+                }
+
+                if (context.parsed.y !== null) {
+                  label += '£' + context.parsed.y.toFixed(2);
+                }
+
+                return label;
+              }
+            }
+          },
+          legend: {
+            labels: {
+              color: 'white', // Set legend text color to black
+              font: {
+                weight: 'bold' // Set legend text font weight to bold
+              }
+            }
+
+          }
+        }
       }
     }
   },
   methods: {
     getMonthName(monthIndex) {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return monthNames[monthIndex];
-  },
-  generateAverageWattsData(currentMonth) {
-    // Assumed average watts data for each month (replace with real data)
-    const averageWatts = [1200, 1100, 1000, 1050, 1250, 1300, 1400, 1350, 1100, 1000, 950, 1150];
-    
-    // Generate data for the past 6 months from the current month
-    const data = [];
-    for (let i = 5; i >= 0; i--) {
-      const monthIndex = (currentMonth - i + 12) % 12;
-      data.push(averageWatts[monthIndex]);
-    }
-    return data;
-  },
+      const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUNE', 'JULY', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      return monthNames[monthIndex];
+    },
+    generateGasData(currentMonth) {
+  // Assumed gas usage data for each month (replace with real data)
+  const gasUsage = [80, 75, 70, 85, 80, 75, 90, 85, 80, 75, 70, 85];
+  return gasUsage.map(wattage => this.calculateCost(wattage)).map(cost => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+},
+generateElectricityData(currentMonth) {
+  // Assumed electricity usage data for each month (replace with real data)
+  const electricityUsage = [200, 210, 220, 215, 205, 210, 200, 215, 220, 225, 230, 220];
+  return electricityUsage.map(wattage => this.calculateCost(wattage)).map(cost => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
+},
+    calculateCost(wattage) {
+      // Add your cost calculation logic here
+      const cost = (wattage / 1000) * 1.5; // Assuming $1.5 per kWh
+
+      // Round to two decimal places
+      return Number(cost.toFixed(2));
+    },
     checkAuthStatus() {
-        fetch('/check_auth/')
+      fetch('/check_auth/')
         .then(response => response.json())
         .then(data => {
-            if (!data.authenticated) {
-                window.location.href = '/login/';
-            }
+          if (!data.authenticated) {
+            window.location.href = '/login/';
+          }
         })
         .catch(error => {
-            console.error('Error:', error);
+          console.error('Error:', error);
         });
     },
     getApplianceWithMostUsage() {
       fetch('/get_appliance_with_most_usage/')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
     }
   },
   mounted() {
@@ -259,6 +306,4 @@ export default defineComponent({
   background: linear-gradient(180deg, rgba(227, 101, 47, 0.90) 0%, rgba(255, 255, 255, 0.00) 75%);
   box-shadow: 0px -15px 26px 0px rgba(0, 0, 0, 0.03);
 }
-
-
 </style>
