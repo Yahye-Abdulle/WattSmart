@@ -15,12 +15,13 @@
         "@fortawesome/vue-fontawesome": "^3.0.5",
         "@types/vue-router": "^2.0.0",
         "bootstrap": "^5.3.2",
-        "chart.js": "^4.4.1",
+        "chart.js": "^4.4.2",
         "flowbite": "^2.3.0",
         "flowbite-vue": "^0.1.2",
         "fortawesome": "^0.0.1-security",
         "pinia-plugin-persistedstate": "^3.2.1",
         "vue": "^3.3.4",
+        "vue-chartjs": "^5.3.0",
         "vue-router": "^4.2.5"
     },
     "devDependencies": {

@@ -33,7 +33,11 @@
       <!-- MAIN CONTENT -->
       <div class="bottom-banner">
         <!-- List of appliances -->
-        
+        <Bar
+          id="my-chart-id"
+          :options="chartOptions"
+          :data="chartData"
+        />
       </div>
     </div>
   </div>
@@ -41,14 +45,68 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+
 
 export default defineComponent({
+  name: 'BarChart',
+  components: { Bar },
   data() {
+    const today = new Date();
+  const currentMonth = today.getMonth();
+  const labels = [];
+  const datasets = [{
+    label: 'Average Watts Used',
+    data: this.generateAverageWattsData(currentMonth),
+    backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+    borderColor: 'rgba(54, 162, 235, 1)',
+    borderWidth: 1
+  }];
+
+    // Generate labels for the past 6 months from March
+    for (let i = 5; i >= 0; i--) {
+      const monthIndex = (currentMonth - i + 12) % 12
+      labels.push(this.getMonthName(monthIndex))
+    }
+
     return {
       title: "Home",
+      chartData: {
+        labels: labels,
+        datasets: datasets
+      },
+      chartOptions: {
+        responsive: true
+      }
     }
   },
   methods: {
+    getMonthName(monthIndex) {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return monthNames[monthIndex];
+  },
+  generateAverageWattsData(currentMonth) {
+    // Assumed average watts data for each month (replace with real data)
+    const averageWatts = [1200, 1100, 1000, 1050, 1250, 1300, 1400, 1350, 1100, 1000, 950, 1150];
+    
+    // Generate data for the past 6 months from the current month
+    const data = [];
+    for (let i = 5; i >= 0; i--) {
+      const monthIndex = (currentMonth - i + 12) % 12;
+      data.push(averageWatts[monthIndex]);
+    }
+    return data;
+  },
     checkAuthStatus() {
         fetch('/check_auth/')
         .then(response => response.json())
@@ -60,6 +118,16 @@ export default defineComponent({
         .catch(error => {
             console.error('Error:', error);
         });
+    },
+    getApplianceWithMostUsage() {
+      fetch('/get_appliance_with_most_usage/')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     }
   },
   mounted() {
