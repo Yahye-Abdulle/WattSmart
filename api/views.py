@@ -9,6 +9,45 @@ from .models import CustomUser
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 import random
+from g4f.client import Client
+
+client = Client()
+
+
+@csrf_exempt
+def gptResponses(request) -> JsonResponse:
+    # check if requiest is post
+    if request.method == 'POST':
+        # get the data from the request
+        data = json.loads(request.body)
+        # get the message from the data
+        message = data.get('message')
+        # check if message is not none
+        if message:
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": '''
+                           Hi there, I will give you data below that will consist of gas and electricity data. I want you to understand patterns
+                           and give me insights on how I can save energy. I will give you data for the past 12 months
+                           
+                           gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85] Cost = £126
+                           electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255] = £438.60
+                           
+                           Recommend me ways to save energy and money.
+                           
+                           I want you to keep the recommendations to max 5 and keep it short and concise. 
+                           Have it in bullet points and make sure it is easy to understand. Don't write too much
+                           
+                           Return the answer in JSON format
+                           
+                           '''}],
+            )
+            print(response.choices[0].message.content)
+            # return the message
+            return JsonResponse({'message': response.choices[0].message.content})
+        else:
+            # return an error message
+            return JsonResponse({'error': 'Message must be provided.'}, status=400)
 
 def check_auth(request) -> JsonResponse:
     if request.user.is_authenticated:
@@ -25,7 +64,6 @@ def get_appliances_for_user(request: HttpRequest) -> JsonResponse:
 
 @csrf_exempt
 def add_appliance(request: HttpRequest) -> JsonResponse:
-    print('yes')
     if request.user.is_authenticated:
         try:
             data = json.loads(request.body)
