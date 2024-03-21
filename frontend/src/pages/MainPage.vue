@@ -187,7 +187,6 @@ export default defineComponent({
       // get sum of elec usag
       const electricSum = electricityUsage.reduce((total, wattage) => total + wattage, 0);
       this.electricityData = this.calculateCost(electricSum);
-      console.log(this.electricityData);
       // return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
       return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
@@ -232,6 +231,8 @@ export default defineComponent({
   mounted() {
     this.checkAuthStatus();
     this.getAppliance_USER();
+    this.generateElectricityData();
+    this.generateGasData();
   }
 })
 </script>
