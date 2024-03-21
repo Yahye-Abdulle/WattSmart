@@ -25,7 +25,7 @@
             <br>
             <span class="usage-count">Currrent Usage</span>
             <br>
-            <span class="usage-value"><span class="usage-value-number">{{ energyUsage }}</span>W | £{{ costPrice }}</span>
+            <span class="usage-value"><span class="usage-value-number">{{ energyUsage }}</span>W | £{{ costPrice * 12 }}</span>
           </div>
         </div>
       </div>
@@ -37,26 +37,25 @@
         <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
 
         <div>
-          <div class="applianceMostUsage">Most Used Appliance: Microwave{{ mostUsedAppliance }}</div>
+          <div class="applianceMostUsage">Most Used Appliance: {{ mostUsedAppliance }}</div>
         </div>
 
         <div class="annualReview">
           <div class="top-left">
             <p>Annual Spend</p>
-            <h5>$30,201</h5>
+            <h5>£{{ costPrice }}</h5>
           </div>
           <div class="top-right">
             <p>Annual Usage</p>
-            <h5>3159 Watts</h5>
+            <h5>{{ energyUsage }}W</h5>
           </div>
-          <span class="lineThrough"></span>
           <div class="bottom-left">
             <p>Electricity</p>
-            <h5>19,023</h5>
+            <h5>£{{ electricityData }}</h5>
           </div>
           <div class="bottom-right">
             <p>Gas</p>
-            <h5>11,219</h5>
+            <h5>£{{ gasData }}</h5>
           </div>
         </div>
       </div>
@@ -96,6 +95,8 @@ export default defineComponent({
         annualCost: 0
       },
       appliancesList: [],
+      electricityData: 0,
+      gasData: 0,
       chartData: {
         labels: labels,
         datasets: [
@@ -174,12 +175,19 @@ export default defineComponent({
     generateGasData() {
       // Assumed gas usage data for each month (replace with real data)
       const gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85];
+      // get sum of gas usage
+      const gasSum = gasUsage.reduce((total, wattage) => total + wattage, 0);
+      this.gasData = this.calculateCost(gasSum);
       // return gasUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
       return gasUsage.map(wattage => this.calculateCost(wattage));
     },
     generateElectricityData() {
       // Assumed electricity usage data for each month (replace with real data)
       const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
+      // get sum of elec usag
+      const electricSum = electricityUsage.reduce((total, wattage) => total + wattage, 0);
+      this.electricityData = this.calculateCost(electricSum);
+      console.log(this.electricityData);
       // return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
       return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
@@ -197,16 +205,6 @@ export default defineComponent({
           if (!data.authenticated) {
             window.location.href = '/login/';
           }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    },
-    getApplianceWithMostUsage() {
-      fetch('/get_appliance_with_most_usage/')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
         })
         .catch(error => {
           console.error('Error:', error);
@@ -394,17 +392,30 @@ export default defineComponent({
 
 .annualReview {
   width: calc(100% - 5%);
-  height: 150px;
+  height: 170px;
+  background-color: rgba(227, 101, 47, 0.90);
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
   margin: 10px auto;
   padding-left: 10px;
+  padding-top: 5px;
   display: grid;
   grid-template-areas:
     "tl tr"
     "bl br";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
+  position: relative; /* Add relative positioning */
+  color: #FFF;
+}
+
+.annualReview::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px; /* Adjust the height as needed */
+  background-color: rgba(0, 69, 107, 0.90); /* Adjust the line color as needed */
 }
 
 .top-left {
@@ -421,14 +432,6 @@ export default defineComponent({
 
 .bottom-right {
   grid-area: br;
-}
-
-.lineThrough {
-  width: 100%;
-  height: 1px;
-  background-color: #000;
-  margin-top: 10px;
-
 }
 </style>: { dataset: { label: string; }; parsed: { y: number | null; }; }: string | number: number: { dataset: { label:
 string; }; parsed: { y: number | null; }; }: string | number: number
