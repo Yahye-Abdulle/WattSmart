@@ -25,7 +25,7 @@
             <br>
             <span class="usage-count">Currrent Usage</span>
             <br>
-            <span class="usage-value"><span class="usage-value-number">{{energyUsage}}</span>W | £{{ costPrice }}</span>
+            <span class="usage-value"><span class="usage-value-number">{{ energyUsage }}</span>W | £{{ costPrice }}</span>
           </div>
         </div>
       </div>
@@ -36,9 +36,29 @@
         <h5 class="last6">LAST 6 MONTHS</h5>
         <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
 
-        <div class="applianceMostUsage"></div>
+        <div>
+          <div class="applianceMostUsage">Most Used Appliance: Microwave{{ mostUsedAppliance }}</div>
+        </div>
 
-        <div class="annualReview"></div>
+        <div class="annualReview">
+          <div class="top-left">
+            <p>Annual Spend</p>
+            <h5>$30,201</h5>
+          </div>
+          <div class="top-right">
+            <p>Annual Usage</p>
+            <h5>3159 Watts</h5>
+          </div>
+          <span class="lineThrough"></span>
+          <div class="bottom-left">
+            <p>Electricity</p>
+            <h5>19,023</h5>
+          </div>
+          <div class="bottom-right">
+            <p>Gas</p>
+            <h5>11,219</h5>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,6 +95,7 @@ export default defineComponent({
         gas: 0,
         annualCost: 0
       },
+      appliancesList: [],
       chartData: {
         labels: labels,
         datasets: [
@@ -192,18 +213,23 @@ export default defineComponent({
         });
     },
     getAppliance_USER() {
-            fetch('/get_appliances/')
-                .then(response => response.json())
-                .then(data => {
-                    const appliances = data.appliances;
+      fetch('/get_appliances/')
+        .then(response => response.json())
+        .then(data => {
+          this.appliancesList = data.appliances;
+          // set appliance with most usage to mostUsedAppliance, straight here, no method needed
+          this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
 
-                    this.energyUsage = appliances.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
-                    this.costPrice = Number(((this.energyUsage / 1000) * 1.5).toFixed(2));
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        },
+          // Set the mostUsedAppliance to the first element (index 0) of the sorted array
+          this.mostUsedAppliance = (this.appliancesList[0] as { name: string }).name;
+
+          this.energyUsage = this.appliancesList.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
+          this.costPrice = Number(((this.energyUsage / 1000) * 1.5).toFixed(2));
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    },
   },
   mounted() {
     this.checkAuthStatus();
@@ -346,26 +372,63 @@ export default defineComponent({
   margin-left: 20px;
   text-align: center;
 }
+
 .applianceMostUsage {
-  width: calc(100% - 5%); /* Adjust width as needed */
-  height: 50px; /* Adjust height as needed */
-  border: 2px solid black; /* Border */
-  background-color: rgba(255, 255, 255, 0.5); /* Background color */
-  margin: 25px auto; /* Center horizontally */
+  width: calc(100% - 5%);
+  /* Adjust width as needed */
+  height: 50px;
+  /* Adjust height as needed */
+  border-radius: 20px;
+  background-color: rgba(227, 101, 47, 0.90);
+  /* Background color */
+  margin: 25px auto 0;
+  /* Center horizontally and set top margin */
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #FFF;
+  /* Text color */
+  font-weight: bold;
 }
 
+
 .annualReview {
-  width: calc(100% - 5%); /* Adjust width as needed */
-  height: 150px; /* Adjust height as needed */
-  border: 2px solid black; /* Border */
-  background-color: rgba(255, 255, 255, 0.5); /* Background color */
-  margin: 10px auto; /* Center horizontally */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: calc(100% - 5%);
+  height: 150px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 10px auto;
+  padding-left: 10px;
+  display: grid;
+  grid-template-areas:
+    "tl tr"
+    "bl br";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.top-left {
+  grid-area: tl;
+}
+
+.top-right {
+  grid-area: tr;
+}
+
+.bottom-left {
+  grid-area: bl;
+}
+
+.bottom-right {
+  grid-area: br;
+}
+
+.lineThrough {
+  width: 100%;
+  height: 1px;
+  background-color: #000;
+  margin-top: 10px;
+
 }
 </style>: { dataset: { label: string; }; parsed: { y: number | null; }; }: string | number: number: { dataset: { label:
 string; }; parsed: { y: number | null; }; }: string | number: number
