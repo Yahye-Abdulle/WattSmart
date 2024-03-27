@@ -1,5 +1,6 @@
 # myapp/models.py
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
@@ -37,3 +38,12 @@ class ApplianceUsage(models.Model):
 
     def __str__(self):
         return f"{self.appliance.name} - {self.energy_usage.date}"
+
+class ChatMessage(models.Model):
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_messages')
+    message = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"

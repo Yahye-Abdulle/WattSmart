@@ -14,33 +14,16 @@
                         </div>
                     </div>
                     <div class="messages" id="chat">
-                        <div class="time">
-                            Today at {{  new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}
-                        </div>
-                        <div class="message parker">
-                            Hey, man! What's up, Mr Stark? 👋
-                        </div>
-                        <div class="message stark">
-                            Kid, where'd you come from?
-                        </div>
-                        <div class="message parker">
-                            Field trip! 🤣
-                        </div>
-                        <div class="message parker">
-                            Uh, what is this guy's problem, Mr. Stark? 🤔
-                        </div>
-                        <div class="message stark">
-                            Uh, he's from space, he came here to steal a necklace from a wizard.
-                        </div>
-                        <div class="message stark">
-                            <div class="typing typing-1"></div>
-                            <div class="typing typing-2"></div>
-                            <div class="typing typing-3"></div>
+                        <div v-for="(message, index) in messages" :key="index" class="message" :class="message.sender">
+                            <div>{{ message.content }}</div>
                         </div>
                     </div>
                     <div class="input">
-                        <i class="fas fa-camera"></i><i class="far fa-laugh-beam"></i><input
-                            placeholder="Type your message here!" type="text" /><i class="fas fa-microphone"></i>
+                        <!-- Input field with event listener for Enter key press -->
+                        <input placeholder="Type your message here!" v-model="newMessage" @keyup.enter="sendMessage"
+                            type="text" />
+                        <!-- Send message button -->
+                        <button @click="sendMessage">Send</button>
                     </div>
                 </div>
             </div>
@@ -51,6 +34,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+interface Message {
+    sender: 'user' | 'ai';
+    content: string;
+}
+
 // var chat = document.getElementById('chat');
 // chat.scrollTop = chat.scrollHeight - chat.clientHeight;
 
@@ -58,6 +46,8 @@ export default defineComponent({
     data() {
         return {
             title: "Home",
+            newMessage: '',
+            messages: [] as Message[],
         }
     },
     methods: {
@@ -72,7 +62,45 @@ export default defineComponent({
                 .catch(error => {
                     console.error('Error:', error);
                 });
-        }
+        },
+        sendMessage() {
+            if (this.newMessage.trim() === '') return;
+
+            const userMessage: Message = {
+                sender: 'user',
+                content: this.newMessage,
+            };
+
+            this.messages.push(userMessage);
+            this.sendToServer(this.newMessage);
+            this.newMessage = '';
+        },
+        sendToServer(message: string) {
+            // Example API call to your Django backend
+            fetch('/send_message/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include other headers as needed, like authorization tokens
+                },
+                body: JSON.stringify({ message }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.response);
+
+                    this.messages.push({
+                        sender: 'ai',
+                        content: data.response, // Assuming your backend returns a JSON with the AI's response
+                    });
+                    // Automatically scroll chat to the latest message
+                    this.$nextTick(() => {
+                        const chatContainer = this.$el.querySelector("#chat");
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        },
     },
     mounted() {
         this.checkAuthStatus();
@@ -213,6 +241,7 @@ html {
     flex-shrink: 2;
     overflow-y: auto;
     box-shadow: inset 0 2rem 2rem -2rem rgba(0, 0, 0, 0.05), inset 0 -2rem 2rem -2rem rgba(0, 0, 0, 0.05);
+    max-height: 34em;
 }
 
 .chat .messages .time {

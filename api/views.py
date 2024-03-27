@@ -3,51 +3,119 @@ import json
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, get_user_model
 from .forms import RegistrationForm, CustomAuthenticationForm, SignUpForm
 from .models import CustomUser
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 import random
 from g4f.client import Client
+from django.db.models import Sum
+from .models import ChatMessage
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.sessions.models import Session
+from django.shortcuts import get_object_or_404
 
 client = Client()
 
-
 @csrf_exempt
-def gptResponses(request) -> JsonResponse:
-    # check if requiest is post
+def gptResponses(request: HttpRequest) -> JsonResponse:
     if request.method == 'POST':
-        # get the data from the request
-        data = json.loads(request.body)
-        # get the message from the data
-        message = data.get('message')
-        # check if message is not none
-        if message:
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": '''
-                           Hi there, I will give you data below that will consist of gas and electricity data. I want you to understand patterns
-                           and give me insights on how I can save energy. I will give you data for the past 12 months
-                           
-                           gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85] Cost = £126
-                           electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255] = £438.60
-                           
-                           Recommend me ways to save energy and money.
-                           
-                           I want you to keep the recommendations to max 5 and keep it short and concise. 
-                           Have it in bullet points and make sure it is easy to understand. Don't write too much
-                           
-                           Return the answer in JSON format
-                           
-                           '''}],
-            )
-            print(response.choices[0].message.content)
-            # return the message
-            return JsonResponse({'message': response.choices[0].message.content})
-        else:
-            # return an error message
-            return JsonResponse({'error': 'Message must be provided.'}, status=400)
+        try:
+            data = json.loads(request.body)
+            message = data.get('message')
+            if message:
+                session_key = request.session.session_key
+                user_id = request.session.get('user_id')
+                
+                # Assuming the user ID is stored in the session
+                if user_id:
+                    user = get_object_or_404(request.user, id=user_id)
+                    if not user.has_setup:
+                        # Perform initial setup for the user if necessary
+                        setupClientFirstTime(request)
+                    
+                    # Your logic for processing the message and generating a response
+                    ...
+
+                    # Store any relevant data in the session for future interactions
+                    request.session['some_key'] = some_value
+
+                    # Return the AI's response
+                    return JsonResponse({'message': ai_response.choices[0].message.content})
+                else:
+                    return JsonResponse({'error': 'User ID not found in session.'}, status=400)
+            else:
+                return JsonResponse({'error': 'Message must be provided.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+# @csrf_exempt
+# def gptResponses(request: HttpRequest) -> JsonResponse:
+#     if request.method == 'POST':
+#         try:
+#             data = json.loads(request.body)
+#             message = data.get('message')
+#             if message:
+#                 if not isinstance(request.user, AnonymousUser):  # Check if user is authenticated
+#                     user = request.user
+#                     if not hasattr(user, 'has_setup'):
+#                         initial_message = f'''
+#                         Hello, I'm the user of this energy management system. You are to help me reduce energy usage and bills. Here are my rules and instructions for you:
+                        
+#                         1. Respond to me if the message I sent is appropriate for the situation. Where the situation is that I want to save energy, money, monitor my energy usage etc. If not, say message not appropriate.
+#                         2. Make each response clear and concise. I prefer bullet points for easy reading.
+#                         3. Focus on actionable strategies that I can implement without significant investments.
+#                         4. Offer insights based on my total energy usage and cost. If there are patterns or tips relevant to saving money, include those.
+#                         5. Format your response in JSON, with each response/recommendation as an item in an array.
+
+#                         Thank you for assisting me in this effort to save energy and money.
+#                         '''
+
+#                         client.chat.completions.create(
+#                             model="gpt-3.5-turbo",
+#                             messages=[{
+#                                 "role": "user", 
+#                                 "content": initial_message
+#                             }],
+#                         )
+                        
+#                         # Mark the user as having completed the setup
+#                         user.has_setup = True
+#                         user.save()
+                    
+#                     # Create a new ChatMessage object for the user's message
+#                     sender_id = request.user.id
+#                     user_message = ChatMessage.objects.create(
+#                         sender_id=sender_id,
+#                         receiver_id=None,  # Assuming AI is the receiver
+#                         message=message
+#                     )
+                    
+#                     # Call the AI model to get the response
+#                     ai_response = client.chat.completions.create(
+#                         model="gpt-3.5-turbo",
+#                         messages=[{"role": "user", "content": message}],
+#                     )
+                    
+#                     # Create a new ChatMessage object for the AI's response
+#                     ai_message = ChatMessage.objects.create(
+#                         sender_id=None,  # Assuming AI is the sender
+#                         receiver_id=sender_id,
+#                         message=ai_response.choices[0].message.content
+#                     )
+#                     # Assuming successful response structure
+#                     return JsonResponse({'message': ai_response.choices[0].message.content})
+#                 else:
+#                     return JsonResponse({'error': 'User is not authenticated.'}, status=401)
+#             else:
+#                 return JsonResponse({'error': 'Message must be provided.'}, status=400)
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     else:
+#         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 def check_auth(request) -> JsonResponse:
     if request.user.is_authenticated:
@@ -171,3 +239,55 @@ def signup_view(request):
 
 
     # return render(request, 'signup.html', {'form': form})
+    
+
+# client = Client()
+
+# def setupClientFirstTime():
+#     response = client.chat.completions.create(
+#                 model="gpt-3.5-turbo",
+#                 messages=[{"role": "user", "content": '''
+#                            Hi there, I will give you data below that will consist of gas and electricity data. I want you to understand patterns
+#                            and give me insights on how I can save energy. I will give you data for the past 12 months
+                           
+#                            gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85] Cost = £126
+#                            electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255] = £438.60
+                           
+#                            Recommend me ways to save energy and money.
+                           
+#                            I want you to keep the recommendations to max 5 and keep it short and concise. 
+#                            Have it in bullet points and make sure it is easy to understand. Don't write too much
+                           
+#                            Return the answer in JSON format
+                           
+#                            '''}],
+#             )
+    
+
+
+# @csrf_exempt
+# def gptResponses(request) -> JsonResponse:
+#     # check if requiest is post
+#     if request.method == 'POST':
+#         # get the data from the request
+#         data = json.loads(request.body)
+#         # get the message from the data
+#         message = data.get('message')
+#         # check if message is not none
+#         if message:
+#             response = client.chat.completions.create(
+#                 model="gpt-3.5-turbo",
+#                 messages=[{"role": "user", "content": '''
+#                            Please answer the question below is JSON format where the response is in bullet points and easy to understand. Each element in array should be a bullet point.
+#                            The message below is what you will respond to labelled with message
+                           
+#                            Message: ''' + message + '''
+                           
+#                            '''}],
+#             )
+#             print(response.choices[0].message.content)
+#             # return the message
+#             return JsonResponse({'message': response.choices[0].message.content})
+#         else:
+#             # return an error message
+#             return JsonResponse({'error': 'Message must be provided.'}, status=400)
