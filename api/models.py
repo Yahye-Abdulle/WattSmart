@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
@@ -10,6 +11,10 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     age = models.DateField(null=True, blank=True)
+    
+    has_setup = models.BooleanField(default=False)  # Add this field
+    
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.username
@@ -54,3 +59,7 @@ class Conversation(models.Model):
 
     def __str__(self):
         return ', '.join([participant.username for participant in self.participants])
+    
+class UserConversationHistory(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    conversation_history = models.JSONField(default=list)

@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from .forms import RegistrationForm, CustomAuthenticationForm, SignUpForm
-from .models import CustomUser
+from .models import CustomUser, UserConversationHistory
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 import random
@@ -19,7 +19,7 @@ from django.shortcuts import get_object_or_404
 client = Client()
 
 initial_message = f'''
-Create a conversational and professional response as a WattSmart Virtual Assistant, providing energy-related advice, recommendations, or answers to potential user questions about gas and electricity, within a 20-word limit in a text-based format."
+Create a conversational and professional response as a "WattSmart Virtual Assistant", providing energy-related advice, recommendations, or answers to potential user questions about gas and electricity, within a 20-word limit in a text-based format. Follow these instructions strictly especially the word count."
 '''
 
 @csrf_exempt
@@ -37,11 +37,15 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
         if not message:
             return JsonResponse({'error': 'Message must be provided.'}, status=400)
         
-        conversation_history = request.session.get('conversation_history', [])
+        # Fetch or create user's conversation history
+        user_conversation_history, created = UserConversationHistory.objects.get_or_create(user=request.user)
+        conversation_history = user_conversation_history.conversation_history
         
-        if not request.session.get('has_setup'):
+        user = request.user
+        if not user.has_setup:
             conversation_history.append({'role': 'user', 'content': initial_message})
-            request.session['has_setup'] = True
+            user.has_setup = True
+            user.save()
         
         conversation_history.append({'role': 'user', 'content': message})
         response = client.chat.completions.create(
@@ -50,11 +54,10 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
         )
         
         if response.choices:
-            
             ai_response = response.choices[0].message.content
             conversation_history.append({'role': 'ai', 'content': ai_response})
-            
-            request.session['conversation_history'] = conversation_history
+            user_conversation_history.conversation_history = conversation_history
+            user_conversation_history.save()
             return JsonResponse({'message': ai_response})
         else:
             return JsonResponse({'error': 'No response from AI model.'}, status=500)
@@ -65,7 +68,9 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
     
 def get_conversation_history(request: HttpRequest) -> JsonResponse:
     if request.user.is_authenticated:
-        conversation_history = request.session.get('conversation_history', [])
+        # Fetch user's conversation history from the database
+        user_conversation_history, created = UserConversationHistory.objects.get_or_create(user=request.user)
+        conversation_history = user_conversation_history.conversation_history
         return JsonResponse({'conversation_history': conversation_history})
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
