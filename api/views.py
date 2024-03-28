@@ -33,8 +33,8 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
     
-    # if not request.user.is_authenticated:
-    #     return JsonResponse({'error': 'User is not authenticated.'}, status=401)
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'User is not authenticated.'}, status=401)
     
     try:
         data = json.loads(request.body)

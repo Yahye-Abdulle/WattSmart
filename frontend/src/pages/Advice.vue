@@ -83,15 +83,15 @@ export default defineComponent({
                     'Content-Type': 'application/json',
                     // Include other headers as needed, like authorization tokens
                 },
-                body: JSON.stringify({ message }),
+                body: JSON.stringify({ message: message }),
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data.response);
+                    console.log(data);
 
                     this.messages.push({
                         sender: 'ai',
-                        content: data.response, // Assuming your backend returns a JSON with the AI's response
+                        content: data.message, // Assuming your backend returns a JSON with the AI's response
                     });
                     // Automatically scroll chat to the latest message
                     this.$nextTick(() => {
@@ -220,7 +220,6 @@ html {
     flex-direction: column;
     justify-content: space-between;
     width: 24rem;
-    height: 100%;
     z-index: 2;
     box-sizing: border-box;
     border-radius: 1rem;
@@ -242,6 +241,7 @@ html {
     overflow-y: auto;
     box-shadow: inset 0 2rem 2rem -2rem rgba(0, 0, 0, 0.05), inset 0 -2rem 2rem -2rem rgba(0, 0, 0, 0.05);
     max-height: 34em;
+    height: 43em;
 }
 
 .chat .messages .time {
@@ -270,7 +270,7 @@ html {
     box-shadow: 0 0 2rem rgba(0, 0, 0, 0.075), 0rem 1rem 1rem -1rem rgba(0, 0, 0, 0.1);
 }
 
-.chat .messages .message.parker {
+.chat .messages .message.user {
     margin: 1rem 1rem 1rem auto;
     border-radius: 1.125rem 1.125rem 0 1.125rem;
     background: #333;
