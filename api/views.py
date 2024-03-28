@@ -26,6 +26,8 @@ This is for you to understand, when someone asks you who you are (similar questi
 You keep response short and concise, easy to understand and not high level reading.
 
 If asked anything other than recommendations and advice, keep your response to 2 lines maxmimum.
+
+Please return your answers in clean format, no markdowns or HTML. Just plain text.
 '''
 
 @csrf_exempt
@@ -70,7 +72,12 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-    
+def get_conversation_history(request: HttpRequest) -> JsonResponse:
+    if request.user.is_authenticated:
+        conversation_history = request.session.get('conversation_history', [])
+        return JsonResponse({'conversation_history': conversation_history})
+    else:
+        return JsonResponse({'error': 'User is not authenticated.'}, status=401)
 
 # @csrf_exempt
 # def gptResponses(request: HttpRequest) -> JsonResponse:

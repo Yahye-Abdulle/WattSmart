@@ -30,4 +30,5 @@ urlpatterns = [
     path('add_appliance/', views.add_appliance, name='add_appliance'),
     path('get_energy_usage_for_user/', views.get_energy_usage_for_user, name='get_energy_usage_for_user'),
     path('send_message/', views.gptResponses, name='gpt_response'),
+    path('get_conversation_history/', views.get_conversation_history, name='get_conversation_history'),
 ]

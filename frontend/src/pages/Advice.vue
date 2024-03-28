@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div class="messages" id="chat">
-                        <div v-for="(message, index) in messages" :key="index" class="message" :class="message.sender">
+                        <div v-for="(message, index) in messages" :key="index" class="message" :class="message.role">
                             <div>{{ message.content }}</div>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
 import { defineComponent } from "vue";
 
 interface Message {
-    sender: 'user' | 'ai';
+    role: 'user' | 'ai';
     content: string;
 }
 
@@ -63,11 +63,26 @@ export default defineComponent({
                     console.error('Error:', error);
                 });
         },
+        getConversationHistory() {
+            fetch('/get_conversation_history/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    
+                    this.messages = data.conversation_history.slice(1);
+                    // Automatically scroll chat to the latest message
+                    this.$nextTick(() => {
+                        const chatContainer = this.$el.querySelector("#chat");
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        },
         sendMessage() {
             if (this.newMessage.trim() === '') return;
 
             const userMessage: Message = {
-                sender: 'user',
+                role: 'user',
                 content: this.newMessage,
             };
 
@@ -90,7 +105,7 @@ export default defineComponent({
                     console.log(data);
 
                     this.messages.push({
-                        sender: 'ai',
+                        role: 'ai',
                         content: data.message, // Assuming your backend returns a JSON with the AI's response
                     });
                     // Automatically scroll chat to the latest message
@@ -104,6 +119,7 @@ export default defineComponent({
     },
     mounted() {
         this.checkAuthStatus();
+        this.getConversationHistory();
     }
 })
 </script>
