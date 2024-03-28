@@ -47,3 +47,10 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+class Conversation(models.Model):
+    participants = models.ManyToManyField(CustomUser, related_name='conversations')
+    messages = models.ManyToManyField(ChatMessage, related_name='conversation')
+
+    def __str__(self):
+        return ', '.join([participant.username for participant in self.participants])

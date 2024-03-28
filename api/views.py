@@ -19,15 +19,7 @@ from django.shortcuts import get_object_or_404
 client = Client()
 
 initial_message = f'''
-Hello, I'm the user of this energy management system. You are to help me reduce energy usage and bills. Here are my rules and instructions for you:
-
-This is for you to understand, when someone asks you who you are (similar questions apply to), you simply say you are "WattSmart's Virtual Assistant".
-
-You keep response short and concise, easy to understand and not high level reading.
-
-If asked anything other than recommendations and advice, keep your response to 2 lines maxmimum.
-
-Please return your answers in clean format, no markdowns or HTML. Just plain text.
+Create a conversational and professional response as a WattSmart Virtual Assistant, providing energy-related advice, recommendations, or answers to potential user questions about gas and electricity, within a 20-word limit in a text-based format."
 '''
 
 @csrf_exempt
@@ -63,8 +55,7 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
             conversation_history.append({'role': 'ai', 'content': ai_response})
             
             request.session['conversation_history'] = conversation_history
-            
-            return JsonResponse({'message': ai_response, 'conversation_history': conversation_history})
+            return JsonResponse({'message': ai_response})
         else:
             return JsonResponse({'error': 'No response from AI model.'}, status=500)
     except json.JSONDecodeError:
