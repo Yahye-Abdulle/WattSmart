@@ -18,39 +18,59 @@ from django.shortcuts import get_object_or_404
 
 client = Client()
 
+initial_message = f'''
+Hello, I'm the user of this energy management system. You are to help me reduce energy usage and bills. Here are my rules and instructions for you:
+
+This is for you to understand, when someone asks you who you are (similar questions apply to), you simply say you are "WattSmart's Virtual Assistant".
+
+You keep response short and concise, easy to understand and not high level reading.
+
+If asked anything other than recommendations and advice, keep your response to 2 lines maxmimum.
+'''
+
 @csrf_exempt
 def gptResponses(request: HttpRequest) -> JsonResponse:
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            message = data.get('message')
-            if message:
-                session_key = request.session.session_key
-                user_id = request.session.get('user_id')
-                
-                # Assuming the user ID is stored in the session
-                if user_id:
-                    user = get_object_or_404(request.user, id=user_id)
-                    if not user.has_setup:
-                        # Perform initial setup for the user if necessary
-                        setupClientFirstTime(request)
-                    
-                    # Your logic for processing the message and generating a response
-                    ...
-
-                    # Store any relevant data in the session for future interactions
-                    request.session['some_key'] = some_value
-
-                    # Return the AI's response
-                    return JsonResponse({'message': ai_response.choices[0].message.content})
-                else:
-                    return JsonResponse({'error': 'User ID not found in session.'}, status=400)
-            else:
-                return JsonResponse({'error': 'Message must be provided.'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-    else:
+    if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
+    
+    # if not request.user.is_authenticated:
+    #     return JsonResponse({'error': 'User is not authenticated.'}, status=401)
+    
+    try:
+        data = json.loads(request.body)
+        message = data.get('message')
+        
+        if not message:
+            return JsonResponse({'error': 'Message must be provided.'}, status=400)
+        
+        conversation_history = request.session.get('conversation_history', [])
+        
+        if not request.session.get('has_setup'):
+            conversation_history.append({'role': 'user', 'content': initial_message})
+            request.session['has_setup'] = True
+        
+        conversation_history.append({'role': 'user', 'content': message})
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=conversation_history
+        )
+        
+        if response.choices:
+            
+            ai_response = response.choices[0].message.content
+            conversation_history.append({'role': 'ai', 'content': ai_response})
+            
+            request.session['conversation_history'] = conversation_history
+            
+            return JsonResponse({'message': ai_response, 'conversation_history': conversation_history})
+        else:
+            return JsonResponse({'error': 'No response from AI model.'}, status=500)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+    
 
 # @csrf_exempt
 # def gptResponses(request: HttpRequest) -> JsonResponse:
