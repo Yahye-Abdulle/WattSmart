@@ -212,8 +212,9 @@ export default defineComponent({
     getAppliance_USER() {
       fetch('/get_appliances/')
         .then(response => response.json())
-        .then(data => {
+        .then(data => {          
           this.appliancesList = data.appliances;
+          
           // set appliance with most usage to mostUsedAppliance, straight here, no method needed
           this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
 
@@ -222,6 +223,24 @@ export default defineComponent({
 
           this.energyUsage = this.appliancesList.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
           this.costPrice = Number(((this.energyUsage / 1000) * 1.5).toFixed(2));
+          
+          let eArray: number[] = [];
+          let gArray: number[] = [];
+
+          this.appliancesList.forEach((appliance: { type: string; wattage: any; }) => {
+            // Check the type of the appliance
+            if (appliance.type === 'electricity') {
+              // If it's electricity, add its wattage to electricityData
+              eArray.push(appliance.wattage);
+            } else if (appliance.type === 'gas') {
+              // If it's gas, add its wattage to gasData
+              gArray.push(appliance.wattage);
+            }
+          });
+
+          this.electricityData = this.calculateCost(eArray.reduce((total, wattage) => total + wattage, 0));
+          this.gasData = this.calculateCost(gArray.reduce((total, wattage) => total + wattage, 0));
+
         })
         .catch(error => {
           console.error('Error:', error);
@@ -249,8 +268,8 @@ export default defineComponent({
   mounted() {
     this.checkAuthStatus();
     this.getAppliance_USER();
-    this.generateElectricityData();
-    this.generateGasData();
+    // this.generateElectricityData();
+    // this.generateGasData();
   }
 })
 </script>

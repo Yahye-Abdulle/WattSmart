@@ -23,8 +23,8 @@ class Appliance(models.Model):
     name = models.CharField(max_length=100)
     wattage = models.PositiveIntegerField(help_text="Watts consumed by the appliance")
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='appliances')
-    type = models.CharField(max_length=100, help_text="Type of appliance")
-
+    type = models.CharField(max_length=100, help_text="Type of appliaance")
+ 
     def __str__(self):
         return self.name
 
