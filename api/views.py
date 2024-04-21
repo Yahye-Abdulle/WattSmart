@@ -159,6 +159,7 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
         try:
             data = json.loads(request.body)
             name = data.get('name')
+            typeApp = data.get('type')
             # generate a random wattage
             random_wattage = random.randint(100, 300)
 
@@ -167,8 +168,8 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
         
-        if name and wattage:
-            appliance = request.user.appliances.create(name=name, wattage=wattage)
+        if name and wattage and typeApp:
+            appliance = request.user.appliances.create(name=name, wattage=wattage, type=typeApp)
             return JsonResponse({'appliance': {'name': appliance.name, 'wattage': appliance.wattage}})
         else:
             return JsonResponse({'error': 'Name and wattage must be provided.'}, status=400)

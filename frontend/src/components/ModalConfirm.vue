@@ -31,6 +31,14 @@
           <input type="text" id="applianceName" v-model="newAppliance.name" class="border border-gray-400 p-2 w-full" placeholder="Name of appliance"/>
         </div>
 
+        <div class="mt-4">
+          <label for="applianceType" class="text-custom-label">Select appliance type:</label>
+          <select v-model="newAppliance.type" id="applianceType" class="border border-gray-400 p-2 w-full">
+            <option value="electricity">Electricity</option>
+            <option value="gas">Gas</option>
+          </select>
+        </div>
+
         <div class="flex justify-center py-4">
           <button @click="addAppliance" class="bg-custom-button text-white px-4 py-2 rounded-md">
             Add
@@ -50,6 +58,7 @@ import { defineEmits } from 'vue';
 
 const newAppliance = ref({
   name: '',
+  type: '',
   wattage: 0,
 });
 
@@ -61,7 +70,7 @@ const nextStep = () => {
 
 const addAppliance = () => {
   const csrfToken = "{{ csrf_token }}";
-
+  
   fetch('/add_appliance/', {
     method: 'POST',
     headers: {
@@ -70,6 +79,7 @@ const addAppliance = () => {
     },
     body: JSON.stringify({
       name: newAppliance.value.name,
+      type: newAppliance.value.type,
       wattage: newAppliance.value.wattage,
     })
   })
