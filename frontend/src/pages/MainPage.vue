@@ -1,11 +1,13 @@
 <template>
+  <div class="loading-overlay" v-if="isLoading">Logging out...
+          <div class="loading-spinner"></div>
+        </div>
   <div class="iphone-container">
-    <!-- Your Home Page Content -->
-
     <div class="home-content">
-      <!-- BANNER AT TOP -->
       <div class="top-banner">
-        <!-- LINEAR BANNER ONLY-->
+        <!-- Logout Button Added -->
+        <img src="../assets/logout.png" alt="Logout Image" @click="logout" class="logout-button">
+
         <svg xmlns="http://www.w3.org/2000/svg" width="373" height="189" viewBox="0 0 373 189" fill="none">
           <path d="M0 167.65C0 167.65 35 189 187.5 189C340 189 375 167.65 375 167.65L374.937 0H0.0633623L0 167.65Z"
             fill="url(#paint0_linear_1_2516)" />
@@ -18,24 +20,21 @@
           </defs>
         </svg>
 
-        <!-- IMAGE BANNER OVERLAY -->
         <div class="banner-overlay">
           <img src="../assets/w4.png" alt="Banner Image">
           <div class="text-overlay">
             <br>
             <span class="usage-count">Currrent Usage</span>
             <br>
-            <span class="usage-value"><span class="usage-value-number">{{ energyUsage }}</span>W | £{{ costPrice * 12 }}</span>
+            <span class="usage-value"><span class="usage-value-number">{{ energyUsage }}</span>W | £{{ costPrice * 12
+              }}</span>
           </div>
         </div>
       </div>
 
-      <!-- MAIN CONTENT -->
       <div class="bottom-banner">
-        <!-- List of appliances -->
         <h5 class="last6">LAST 6 MONTHS</h5>
         <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
-
         <div>
           <div class="applianceMostUsage">Most Used Appliance: {{ mostUsedAppliance }}</div>
         </div>
@@ -86,6 +85,7 @@ export default defineComponent({
     }
 
     return {
+      isLoading: false,
       energyUsage: 0,
       costPrice: 0,
       mostUsedAppliance: '',
@@ -227,6 +227,24 @@ export default defineComponent({
           console.error('Error:', error);
         });
     },
+    logout() {
+      this.showLoading();
+
+      setTimeout(() => {
+        // Perform logout action here
+        
+        // After logout is complete, hide loading screen
+        this.hideLoading();
+        window.location.href = '/login/';
+      }, 2000);
+
+    },
+    showLoading() {
+      this.isLoading = true;
+    },
+    hideLoading() {
+      this.isLoading = false;
+    }
   },
   mounted() {
     this.checkAuthStatus();
@@ -405,7 +423,8 @@ export default defineComponent({
     "bl br";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  position: relative; /* Add relative positioning */
+  position: relative;
+  /* Add relative positioning */
   color: #FFF;
 }
 
@@ -415,8 +434,10 @@ export default defineComponent({
   top: 50%;
   left: 0;
   right: 0;
-  height: 1px; /* Adjust the height as needed */
-  background-color: rgba(0, 69, 107, 0.90); /* Adjust the line color as needed */
+  height: 1px;
+  /* Adjust the height as needed */
+  background-color: rgba(0, 69, 107, 0.90);
+  /* Adjust the line color as needed */
 }
 
 .top-left {
@@ -433,6 +454,52 @@ export default defineComponent({
 
 .bottom-right {
   grid-area: br;
+}
+
+.logout-button {
+  position: absolute;
+  right: 10px;
+  /* Adjusts the distance from the right edge */
+  top: 34px;
+  /* Adjusts the distance from the top edge */
+  cursor: pointer;
+  /* Changes the cursor to a pointer when hovering over the image */
+  width: 30px;
+  /* Adjust the width as necessary */
+  height: 30px;
+  /* Adjust the height as necessary */
+  cursor: pointer;
+  /* Ensures the cursor changes to a pointer when hovering the image */
+  z-index: 100;
+  /* Ensure it's on top if other elements are interfering */
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 88%;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1); /* Light border color */
+  border-top: 4px solid #333; /* Dark border color for spinner */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite; /* Animation for spinner rotation */
+  z-index: 1001; /* Ensure it's on top of other elements */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>: { dataset: { label: string; }; parsed: { y: number | null; }; }: string | number: number: { dataset: { label:
 string; }; parsed: { y: number | null; }; }: string | number: number
