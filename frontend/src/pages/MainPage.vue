@@ -1,7 +1,7 @@
 <template>
   <div class="loading-overlay" v-if="isLoading">Logging out...
-          <div class="loading-spinner"></div>
-        </div>
+    <div class="loading-spinner"></div>
+  </div>
   <div class="iphone-container">
     <div class="home-content">
       <div class="top-banner">
@@ -24,9 +24,9 @@
           <img src="../assets/w4.png" alt="Banner Image">
           <div class="text-overlay">
             <br>
-            <span class="usage-count">Currrent Usage</span>
+            <span class="usage-count">Current Usage</span>
             <br>
-            <span class="usage-value"><span class="usage-value-number">{{ energyUsage }}</span>W | £{{ costPrice * 12
+            <span class="usage-value"><span class="usage-value-number">{{ Number((energyUsage * 0.178546).toFixed(0)) }}</span>W | £{{ costPrice
               }}</span>
           </div>
         </div>
@@ -42,7 +42,7 @@
         <div class="annualReview">
           <div class="top-left">
             <p>Annual Spend</p>
-            <h5>£{{ costPrice }}</h5>
+            <h5>£{{ costPrice * 12 }}</h5>
           </div>
           <div class="top-right">
             <p>Annual Usage</p>
@@ -173,22 +173,70 @@ export default defineComponent({
       return monthNames[monthIndex];
     },
     generateGasData() {
-      // Assumed gas usage data for each month (replace with real data)
-      const gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85];
-      // get sum of gas usage
-      const gasSum = gasUsage.reduce((total, wattage) => total + wattage, 0);
-      this.gasData = this.calculateCost(gasSum);
-      // return gasUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
-      return gasUsage.map(wattage => this.calculateCost(wattage));
+      fetch('/get_appliances/')
+        .then(response => response.json())
+        .then(data => {
+          this.appliancesList = data.appliances;
+
+          // set appliance with most usage to mostUsedAppliance, straight here, no method needed
+          this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
+
+          // Get gas appliances from appliancesList
+          const gasAppliances = this.appliancesList.filter((appliance: { type: string; wattage: any; }) => appliance.type === 'gas');
+
+          // Extract wattages from gas appliances
+          const gasUsage = gasAppliances.map((appliance: { type: string; wattage: any; }) => appliance.wattage);
+
+          // Calculate total gas usage
+          const gasSum = gasUsage.reduce((total, wattage) => total + wattage, 0);
+
+          // Calculate gas cost
+          const gasCost = this.calculateCost(gasSum);
+
+          // Set gasData
+          this.gasData = gasCost;
+
+          // Return gas cost array
+          return gasCost;
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
     },
     generateElectricityData() {
-      // Assumed electricity usage data for each month (replace with real data)
-      const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
-      // get sum of elec usag
-      const electricSum = electricityUsage.reduce((total, wattage) => total + wattage, 0);
-      this.electricityData = this.calculateCost(electricSum);
-      // return electricityUsage.map(wattage => this.calculateCost(wattage)).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100); // Generate random cost within the range of 100 to 300
-      return electricityUsage.map(wattage => this.calculateCost(wattage));
+      fetch('/get_appliances/')
+        .then(response => response.json())
+        .then(data => {
+          this.appliancesList = data.appliances;
+
+          // set appliance with most usage to mostUsedAppliance, straight here, no method needed
+          this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
+
+          // Get electricity appliances from appliancesList
+          const electricityAppliances = this.appliancesList.filter((appliance: { type: string; wattage: any; }) => appliance.type === 'electricity');
+
+          // Extract wattages from electricity appliances
+          const electricityUsage = electricityAppliances.map((appliance: { type: string; wattage: any; }) => appliance.wattage);
+
+          // Calculate total electricity usage
+          const electricSum = electricityUsage.reduce((total, wattage) => total + wattage, 0);
+
+          // Calculate electricity cost
+          const electricCost = this.calculateCost(electricSum);
+
+          // Set electricityData
+          this.electricityData = electricCost;
+
+          // Return electricity cost array
+          return electricCost;
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
     },
     calculateCost(wattage: any) {
       // Add your cost calculation logic here
@@ -212,9 +260,9 @@ export default defineComponent({
     getAppliance_USER() {
       fetch('/get_appliances/')
         .then(response => response.json())
-        .then(data => {          
+        .then(data => {
           this.appliancesList = data.appliances;
-          
+
           // set appliance with most usage to mostUsedAppliance, straight here, no method needed
           this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
 
@@ -223,23 +271,24 @@ export default defineComponent({
 
           this.energyUsage = this.appliancesList.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
           this.costPrice = Number(((this.energyUsage / 1000) * 1.5).toFixed(2));
-          
-          let eArray: number[] = [];
-          let gArray: number[] = [];
 
-          this.appliancesList.forEach((appliance: { type: string; wattage: any; }) => {
-            // Check the type of the appliance
-            if (appliance.type === 'electricity') {
-              // If it's electricity, add its wattage to electricityData
-              eArray.push(appliance.wattage);
-            } else if (appliance.type === 'gas') {
-              // If it's gas, add its wattage to gasData
-              gArray.push(appliance.wattage);
-            }
-          });
+          // let eArray: number[] = [];
+          // let gArray: number[] = [];
 
-          this.electricityData = this.calculateCost(eArray.reduce((total, wattage) => total + wattage, 0));
-          this.gasData = this.calculateCost(gArray.reduce((total, wattage) => total + wattage, 0));
+          // this.appliancesList.forEach((appliance: { type: string; wattage: any; }) => {
+          //   // Check the type of the appliance
+          //   if (appliance.type === 'electricity') {
+          //     // If it's electricity, add its wattage to electricityData
+          //     eArray.push(appliance.wattage);
+          //   } else if (appliance.type === 'gas') {
+          //     // If it's gas, add its wattage to gasData
+          //     gArray.push(appliance.wattage);
+          //   }
+          // });
+
+
+          // this.electricityData = this.calculateCost(eArray.reduce((total, wattage) => total + wattage, 0));
+          // this.gasData = this.calculateCost(gArray.reduce((total, wattage) => total + wattage, 0));
 
         })
         .catch(error => {
@@ -251,7 +300,7 @@ export default defineComponent({
 
       setTimeout(() => {
         // Perform logout action here
-        
+
         // After logout is complete, hide loading screen
         this.hideLoading();
         window.location.href = '/login/';
@@ -268,8 +317,8 @@ export default defineComponent({
   mounted() {
     this.checkAuthStatus();
     this.getAppliance_USER();
-    // this.generateElectricityData();
-    // this.generateGasData();
+    this.generateElectricityData();
+    this.generateGasData();
   }
 })
 </script>
@@ -499,26 +548,37 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 88%;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Semi-transparent white background */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it's on top of other elements */
+  z-index: 1000;
+  /* Ensure it's on top of other elements */
 }
 
 .loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1); /* Light border color */
-  border-top: 4px solid #333; /* Dark border color for spinner */
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  /* Light border color */
+  border-top: 4px solid #333;
+  /* Dark border color for spinner */
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  animation: spin 1s linear infinite; /* Animation for spinner rotation */
-  z-index: 1001; /* Ensure it's on top of other elements */
+  animation: spin 1s linear infinite;
+  /* Animation for spinner rotation */
+  z-index: 1001;
+  /* Ensure it's on top of other elements */
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>: { dataset: { label: string; }; parsed: { y: number | null; }; }: string | number: number: { dataset: { label:
 string; }; parsed: { y: number | null; }; }: string | number: number
