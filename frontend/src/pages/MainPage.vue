@@ -177,66 +177,42 @@ export default defineComponent({
         .then(response => response.json())
         .then(data => {
           this.appliancesList = data.appliances;
-
-          // set appliance with most usage to mostUsedAppliance, straight here, no method needed
           this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
-
-          // Get gas appliances from appliancesList
           const gasAppliances = this.appliancesList.filter((appliance: { type: string; wattage: any; }) => appliance.type === 'gas');
-
-          // Extract wattages from gas appliances
           const gasUsage = gasAppliances.map((appliance: { type: string; wattage: any; }) => appliance.wattage);
-
-          // Calculate total gas usage
           const gasSum = gasUsage.reduce((total, wattage) => total + wattage, 0);
-
-          // Calculate gas cost
           const gasCost = this.calculateCost(gasSum);
-
-          // Set gasData
           this.gasData = gasCost;
-
-          // Return gas cost array
-          return gasCost;
-
+          // return gasCost;
+          // return gasUsage.map(wattage => this.calculateCost(wattage));
         })
         .catch(error => {
           console.error('Error:', error);
         });
 
+        const gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85];
+        return gasUsage.map(wattage => this.calculateCost(wattage));
     },
     generateElectricityData() {
       fetch('/get_appliances/')
         .then(response => response.json())
         .then(data => {
           this.appliancesList = data.appliances;
-
-          // set appliance with most usage to mostUsedAppliance, straight here, no method needed
           this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
-
-          // Get electricity appliances from appliancesList
           const electricityAppliances = this.appliancesList.filter((appliance: { type: string; wattage: any; }) => appliance.type === 'electricity');
-
-          // Extract wattages from electricity appliances
           const electricityUsage = electricityAppliances.map((appliance: { type: string; wattage: any; }) => appliance.wattage);
-
-          // Calculate total electricity usage
           const electricSum = electricityUsage.reduce((total, wattage) => total + wattage, 0);
-
-          // Calculate electricity cost
           const electricCost = this.calculateCost(electricSum);
-
-          // Set electricityData
           this.electricityData = electricCost;
-
-          // Return electricity cost array
-          return electricCost;
-
+          // return electricCost;
+          // return electricityUsage.map(wattage => this.calculateCost(wattage));
         })
         .catch(error => {
           console.error('Error:', error);
         });
 
+        const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
+        return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
     calculateCost(wattage: any) {
       // Add your cost calculation logic here
