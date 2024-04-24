@@ -7,7 +7,7 @@
                     <div class="contact bar">
                         <div class="pic stark"></div>
                         <div class="name">
-                            Friendly AI Chat
+                            WattSmart Chat Assistant
                         </div>
                         <div class="seen">
                             Ask right away
@@ -23,7 +23,7 @@
                         <input placeholder="Type your message here!" v-model="newMessage" @keyup.enter="sendMessage"
                             type="text" />
                         <!-- Send message button -->
-                        <button @click="sendMessage">Send</button>
+                        <button class="button-13" role="button" @click="sendMessage">Send</button>
                     </div>
                 </div>
             </div>
@@ -449,5 +449,39 @@ html {
     width: 24px;
     height: 24px;
     margin-bottom: 4px;
+}
+
+.button-13 {
+    background-image: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Eina01,sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 35px;
+  padding: 0 10px 0 11px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  width: 100px;
+}
+
+.button-13:hover {
+  background-color: #f7fafa;
+}
+
+.button-13:focus {
+  border-color: #008296;
+  box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+  outline: 0;
 }
 </style>
