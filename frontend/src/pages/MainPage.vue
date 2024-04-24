@@ -280,7 +280,7 @@ export default defineComponent({
         // After logout is complete, hide loading screen
         this.hideLoading();
         window.location.href = '/login/';
-      }, 2000);
+      }, 1000);
 
     },
     showLoading() {
