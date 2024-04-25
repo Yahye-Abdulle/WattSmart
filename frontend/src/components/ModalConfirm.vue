@@ -5,12 +5,19 @@
         <h3 class="text-custom-heading">Step 1 / 2</h3>
 
         <div class="mt-4 infostepone">
-          <h3 for="applianceName" class="text-custom-label">Plug the appliance into the WattSmart socket</h3>
+          <span for="applianceName" class="text-custom-label">
+            <p style="font-size: 20px; max-width: 350px; font-weight: 500">Please ensure WiFi is enabled on phone </p>
+            <p style="font-size: 15px; font-weight: 500;">WattSmart will scan using WiFi to add all detected smart home devices</p>  
+          </span>
+        </div>
+
+        <div>
+          Scanning might take few seconds
         </div>
 
         <div class="flex justify-center py-4 commandButtonsOne">
           <button @click="nextStep" class="bg-custom-button text-white px-4 py-2 rounded-md">
-            Next
+            Scan
           </button>
           <button @click="$emit('close')" class="text-custom-button px-4 py-2 rounded-md border border-custom-button">
             Cancel
@@ -25,7 +32,7 @@
       <div class="bg-custom-primary text-white rounded-lg text-center shadow-xl p-6 w-64" role="dialog" aria-modal="true">
         <h3 class="text-custom-heading">Step 2 / 2</h3>
 
-        <!-- Add Appliance Step -->
+        <!-- Add Appliance Step
         <div class="mt-4">
           <label for="applianceWattage" class="text-custom-label">Give a name for appliance:</label>
           <input type="text" id="applianceName" v-model="newAppliance.name" class="border border-gray-400 p-2 w-full" placeholder="Name of appliance"/>
@@ -37,16 +44,23 @@
             <option value="electricity">Electricity</option>
             <option value="gas">Gas</option>
           </select>
+        </div> --> 
+
+        <div class="mt-4 infostepone">
+          <span for="applianceName" class="text-custom-label">
+            <p style="font-size: 20px; max-width: 350px; font-weight: 500">Press button below to add all devices found on the current WiFi</p>
+          </span>
         </div>
 
         <div class="flex justify-center py-4">
           <button @click="addAppliance" class="bg-custom-button text-white px-4 py-2 rounded-md">
-            Add
+            Add Devices
           </button>
-          <button @click="$emit('close')" class="text-custom-button px-4 py-2 rounded-md border border-custom-button">
+          
+        </div>
+        <button @click="$emit('close')" class="text-custom-button px-4 py-2 rounded-md border border-custom-button">
             Cancel
           </button>
-        </div>
       </div>
     </div>
   </div>
@@ -65,7 +79,9 @@ const newAppliance = ref({
 const showInformationStep = ref(true);
 
 const nextStep = () => {
-  showInformationStep.value = false;
+  setTimeout(() => {
+    showInformationStep.value = false;
+  }, 1500);
 };
 
 const addAppliance = () => {
