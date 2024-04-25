@@ -205,7 +205,10 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
             name = data.get('name')
             typeApp = data.get('type')
             # generate a random wattage
-            random_wattage = random.randint(100, 300)
+            if typeApp == 'gas':
+                random_wattage = random.randint(40, 95)
+            else:
+                random_wattage = random.randint(100, 300)
 
             # Round the wattage to the nearest multiple of 100
             wattage = round(random_wattage, -2)
