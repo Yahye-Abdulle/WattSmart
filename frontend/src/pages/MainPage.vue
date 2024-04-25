@@ -88,6 +88,8 @@ export default defineComponent({
       isLoading: false,
       energyUsage: 0,
       costPrice: 0,
+      gasTotalSum: 0,
+      electricityTotalSum: 0,
       mostUsedAppliance: '',
       annualReviewData: {
         electricity: 0,
@@ -189,8 +191,13 @@ export default defineComponent({
         .catch(error => {
           console.error('Error:', error);
         });
-
-        const gasUsage = [60, 55, 65, 85, 55, 35, 90, 85, 80, 75, 70, 85];
+        this.gasTotalSum = Math.random() * (95 - 40) + 40;
+        const gasUsage = [];
+        for (let i = 0; i < 12; i++) {
+          const randomFactor = Math.random() * (1.09 - 0.97) + 0.97; 
+          const randomUsage = this.gasTotalSum * randomFactor; // Generate a random number between 1 and 100
+          gasUsage.push(randomUsage);
+        }
         return gasUsage.map(wattage => this.calculateCost(wattage));
     },
     generateElectricityData() {
@@ -211,7 +218,14 @@ export default defineComponent({
           console.error('Error:', error);
         });
 
-        const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
+        // const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
+        this.electricityTotalSum = Math.random() * (300 - 150) + 150; // Generate a random number between 50 and 100
+        const electricityUsage = [];
+        for (let i = 0; i < 12; i++) {
+          const randomFactor = Math.random() * (1.20 - 0.875) + 0.875; 
+          const randomUsage = this.electricityTotalSum * randomFactor; // Generate a random number between 1 and 100
+          electricityUsage.push(randomUsage);
+        }
         return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
     calculateCost(wattage: any) {
