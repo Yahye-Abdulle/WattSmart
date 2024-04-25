@@ -15,12 +15,55 @@ from .models import ChatMessage
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.models import Session
 from django.shortcuts import get_object_or_404
+import re
 
 client = Client()
 
+# initial_message = f'''
+# Create a conversational and professional response as a "WattSmart Virtual Assistant", providing energy-related advice, recommendations, or answers to potential user questions about gas and electricity, within a 20-word limit in a text-based format. Follow these instructions strictly especially the word count."
+# '''
+
 initial_message = f'''
-Create a conversational and professional response as a "WattSmart Virtual Assistant", providing energy-related advice, recommendations, or answers to potential user questions about gas and electricity, within a 20-word limit in a text-based format. Follow these instructions strictly especially the word count."
+Act as 'WattSmart Virtual Assistant'. Respond to user queries about gas and electricity in a 20-word limit, providing conversational and professional advice." I made the following changes to make the prompt clearer and more specific for the ChatGPT model: 1. Simplified the title: Instead of a long phrase, I used a straightforward title that clearly identifies the assistant's role. 2. Focused on the main task: I removed unnecessary details and emphasized the primary objective of responding to user queries. 3. Highlighted the key constraint: The 20-word limit was moved to the forefront to ensure the model stays concise and within the specified word count. 4. Used actionable language: Phrases like "Respond to user queries" and "providing advice" give the model clear instructions on what to do.
+Return responses in plain text format. No markdown syntax such as ###, **, bullet points and other syntaxs. 
+Keep responses clear and concise.
+No bullet points or markdown syntax.
 '''
+
+def remove_markdown(text):
+    # Remove bold formatting: **text**
+    text = re.sub(r'\*\*(.*?)\*\*', '', text)
+    
+    # Remove italic formatting: *text*
+    text = re.sub(r'\*(.*?)\*', '', text)
+    
+    # Remove headers: ### text
+    text = re.sub(r'###(.*?)\n', r'\1\n', text)
+    text = re.sub(r'##(.*?)\n', r'\1\n', text)
+    text = re.sub(r'#(.*?)\n', r'\1\n', text)
+    
+    # Remove code blocks: ```code```
+    text = re.sub(r'```(.*?)```', '', text)
+    
+    # Remove inline code: `code`
+    text = re.sub(r'`(.*?)`', '', text)
+    
+    # Remove unordered lists: - item
+    text = re.sub(r'- (.*?)\n', '', text)
+    
+    # Remove ordered lists: 1. item
+    text = re.sub(r'\d+\.(.*?)\n', '', text)
+    
+    # Remove links: [text](url)
+    text = re.sub(r'\[(.*?)\]\((.*?)\)', r'\1', text)
+    
+    # Remove blockquotes: > text
+    text = re.sub(r'> (.*?)\n', '', text)
+    
+    # Remove horizontal rules: ---
+    text = re.sub(r'---', '', text)
+    
+    return text
 
 @csrf_exempt
 def gptResponses(request: HttpRequest) -> JsonResponse:
@@ -54,6 +97,7 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
         )
         
         if response.choices:
+            # ai_response = remove_markdown(response.choices[0].message.content)
             ai_response = response.choices[0].message.content
             conversation_history.append({'role': 'ai', 'content': ai_response})
             user_conversation_history.conversation_history = conversation_history
