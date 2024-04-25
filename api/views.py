@@ -23,12 +23,30 @@ client = Client()
 # Create a conversational and professional response as a "WattSmart Virtual Assistant", providing energy-related advice, recommendations, or answers to potential user questions about gas and electricity, within a 20-word limit in a text-based format. Follow these instructions strictly especially the word count."
 # '''
 
-initial_message = f'''
-Act as 'WattSmart Virtual Assistant'. Respond to user queries about gas and electricity in a 20-word limit, providing conversational and professional advice." I made the following changes to make the prompt clearer and more specific for the ChatGPT model: 1. Simplified the title: Instead of a long phrase, I used a straightforward title that clearly identifies the assistant's role. 2. Focused on the main task: I removed unnecessary details and emphasized the primary objective of responding to user queries. 3. Highlighted the key constraint: The 20-word limit was moved to the forefront to ensure the model stays concise and within the specified word count. 4. Used actionable language: Phrases like "Respond to user queries" and "providing advice" give the model clear instructions on what to do.
-Return responses in plain text format. No markdown syntax such as ###, **, bullet points and other syntaxs. 
-Keep responses clear and concise.
-No bullet points or markdown syntax.
-'''
+# initial_message = f'''
+# Act as 'WattSmart Virtual Assistant'. Respond to user queries about gas and electricity in a 20-word limit, providing conversational and professional advice." I made the following changes to make the prompt clearer and more specific for the ChatGPT model: 1. Simplified the title: Instead of a long phrase, I used a straightforward title that clearly identifies the assistant's role. 2. Focused on the main task: I removed unnecessary details and emphasized the primary objective of responding to user queries. 3. Highlighted the key constraint: The 20-word limit was moved to the forefront to ensure the model stays concise and within the specified word count. 4. Used actionable language: Phrases like "Respond to user queries" and "providing advice" give the model clear instructions on what to do.
+# Return responses in plain text format. No markdown syntax such as ###, **, bullet points and other syntaxs. 
+# Keep responses clear and concise.
+# No bullet points or markdown syntax.
+# '''
+
+# initial_message = "Act as 'Chat Assistant,' strictly respond to energy-related queries in 30 words maximum, offering professional advice. Take every input as a question!"
+
+initial_message = "I want you to be an energy expert AI that only answer questions relevant to the energy sector. When you answer, respond in a way that a non-energy person will understand. Call yourself Chat Assistant"
+
+# I will give examples below. There will be two people in this situation (Human and Computer)
+# You are Computer and Human is asking the questions
+
+# Human: What time is it best to reduce energy usage?
+# Computer: The best time to reduce energy usage is during off-peak hours, typically early morning or late at night.
+
+# Human: How can I reduce my energy consumption at home?
+# Computer: Use LED bulbs, unplug electronics when not in use, and upgrade to energy-efficient appliances to reduce energy consumption at home.
+
+# Human: Who is the best football player in the world?
+# Computer: I'm sorry, I can only provide information on energy-related queries. Please ask a question related to energy usage or conservation.
+
+# These are simply examples. You can use them as a guide to help you understand the task. Do not respond as the formats.
 
 def remove_markdown(text):
     # Remove bold formatting: **text**
@@ -92,13 +110,13 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
         
         conversation_history.append({'role': 'user', 'content': message})
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-3.5-turbo", #gpt-4-32k-0613
             messages=conversation_history
         )
         
         if response.choices:
-            # ai_response = remove_markdown(response.choices[0].message.content)
-            ai_response = response.choices[0].message.content
+            ai_response = remove_markdown(response.choices[0].message.content).strip()
+            # ai_response = response.choices[0].message.content
             conversation_history.append({'role': 'ai', 'content': ai_response})
             user_conversation_history.conversation_history = conversation_history
             user_conversation_history.save()
