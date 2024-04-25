@@ -197,29 +197,95 @@ def get_appliances_for_user(request: HttpRequest) -> JsonResponse:
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
 
+# @csrf_exempt
+# def add_appliance(request: HttpRequest) -> JsonResponse:
+#     if request.user.is_authenticated:
+#         try:
+#             data = json.loads(request.body)
+#             name = data.get('name')
+#             typeApp = data.get('type')
+#             # generate a random wattage
+#             if typeApp == 'gas':
+#                 random_wattage = random.randint(40, 95)
+#             else:
+#                 random_wattage = random.randint(100, 300)
+
+#             # Round the wattage to the nearest multiple of 100
+#             wattage = round(random_wattage, -2)
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
+        
+#         if name and wattage and typeApp:
+#             appliance = request.user.appliances.create(name=name, wattage=wattage, type=typeApp)
+#             return JsonResponse({'appliance': {'name': appliance.name, 'wattage': appliance.wattage}})
+#         else:
+#             return JsonResponse({'error': 'Name and wattage must be provided.'}, status=400)
+#     else:
+#         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
+
+appliances = [
+    {'name': 'Toaster', 'type': 'electricity', 'min_wattage': 600, 'max_wattage': 1200},
+    {'name': 'Microwave', 'type': 'electricity', 'min_wattage': 800, 'max_wattage': 2000},
+    {'name': 'Oven', 'type': 'electricity', 'min_wattage': 1500, 'max_wattage': 5000},
+    {'name': 'Stove', 'type': 'gas', 'min_wattage': 40, 'max_wattage': 95},
+    {'name': 'Gas Heater', 'type': 'gas', 'min_wattage': 100, 'max_wattage': 300},
+    {'name': 'Dishwasher', 'type': 'electricity', 'min_wattage': 1200, 'max_wattage': 2000},
+    {'name': 'Washing Machine', 'type': 'electricity', 'min_wattage': 500, 'max_wattage': 1500},
+    {'name': 'Dryer', 'type': 'electricity', 'min_wattage': 1000, 'max_wattage': 5000},
+    {'name': 'Refrigerator', 'type': 'electricity', 'min_wattage': 100, 'max_wattage': 800},
+    {'name': 'Freezer', 'type': 'electricity', 'min_wattage': 100, 'max_wattage': 500},
+    {'name': 'Air Conditioner', 'type': 'electricity', 'min_wattage': 1000, 'max_wattage': 5000},
+    {'name': 'Space Heater', 'type': 'electricity', 'min_wattage': 500, 'max_wattage': 1500},
+    {'name': 'Coffee Maker', 'type': 'electricity', 'min_wattage': 800, 'max_wattage': 1500},
+    {'name': 'Blender', 'type': 'electricity', 'min_wattage': 300, 'max_wattage': 1000},
+    {'name': 'Electric Grill', 'type': 'electricity', 'min_wattage': 1000, 'max_wattage': 2000},
+    {'name': 'Hair Dryer', 'type': 'electricity', 'min_wattage': 800, 'max_wattage': 1800},
+    {'name': 'TV', 'type': 'electricity', 'min_wattage': 50, 'max_wattage': 400},
+    {'name': 'Laptop', 'type': 'electricity', 'min_wattage': 30, 'max_wattage': 150},
+    {'name': 'Desktop Computer', 'type': 'electricity', 'min_wattage': 150, 'max_wattage': 600},
+    {'name': 'Router', 'type': 'electricity', 'min_wattage': 5, 'max_wattage': 20},
+    {'name': 'Printer', 'type': 'electricity', 'min_wattage': 20, 'max_wattage': 100},
+    # Add more appliances as needed
+]
+
+
 @csrf_exempt
 def add_appliance(request: HttpRequest) -> JsonResponse:
     if request.user.is_authenticated:
         try:
             data = json.loads(request.body)
-            name = data.get('name')
-            typeApp = data.get('type')
-            # generate a random wattage
-            if typeApp == 'gas':
-                random_wattage = random.randint(40, 95)
-            else:
-                random_wattage = random.randint(100, 300)
-
-            # Round the wattage to the nearest multiple of 100
-            wattage = round(random_wattage, -2)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data.'}, status=400)
         
-        if name and wattage and typeApp:
-            appliance = request.user.appliances.create(name=name, wattage=wattage, type=typeApp)
-            return JsonResponse({'appliance': {'name': appliance.name, 'wattage': appliance.wattage}})
-        else:
-            return JsonResponse({'error': 'Name and wattage must be provided.'}, status=400)
+        user_appliances = request.user.appliances.values_list('name', flat=True)
+        
+        num_appliances = random.randint(7, 10)
+        
+        selected_gas_appliances = random.sample([appliance for appliance in appliances if appliance['type'] == 'gas'], random.randint(1, 3))
+        
+        selected_appliances = random.sample(appliances, num_appliances) + selected_gas_appliances
+
+        for appliance in selected_appliances:
+            name = appliance['name']
+            typeApp = appliance['type']
+            min_wattage = appliance['min_wattage']
+            max_wattage = appliance['max_wattage']
+
+            # Check if appliance already exists in user's list
+            if name not in user_appliances:
+                # Generate a random wattage within the specified range
+                if typeApp == 'gas':
+                    random_wattage = random.randint(min_wattage, max_wattage)
+                else:
+                    random_wattage = random.randint(min_wattage, max_wattage)
+
+                # Round the wattage to the nearest multiple of 100
+                wattage = round(random_wattage, -2)
+
+                # Create the appliance for the user
+                request.user.appliances.create(name=name, wattage=wattage, type=typeApp)
+
+        return JsonResponse({'message': 'Appliances added successfully.'})
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
     

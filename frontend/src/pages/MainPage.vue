@@ -42,7 +42,7 @@
         <div class="annualReview">
           <div class="top-left">
             <p>Annual Spend</p>
-            <h5>£{{ costPrice * 12 }}</h5>
+            <h5>£{{ (costPrice * 12).toFixed(0) }}</h5>
           </div>
           <div class="top-right">
             <p>Annual Usage</p>
