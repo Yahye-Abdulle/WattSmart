@@ -18,7 +18,7 @@
                         <input type="text" name="last_name" placeholder="Last Name" >
                         <input type="email" name="email" placeholder="Email" >
                         <input type="password" name="password" placeholder="Password" >
-                        <input type="date" name="age" >
+                        <input type="date" name="age" placeholder="Date of Birth">
                         <button type="submit" name="signup">Sign up</button>
                     </form>
                 </div>
@@ -36,6 +36,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attach click event handlers to all inputs
+        var inputs = document.querySelectorAll('input');
+        inputs.forEach(function(input) {
+            input.addEventListener('click', function() {
+                var text = input.getAttribute('placeholder');
+                speak(text);
+            });
+        });
+
+        // Function to convert text to speech
+        function speak(text) {
+            var synth = window.speechSynthesis;
+            var utterance = new SpeechSynthesisUtterance(text);
+            synth.speak(utterance);
+        }
+    });
+</script>
 
 <style>
     body {
