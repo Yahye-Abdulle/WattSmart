@@ -307,6 +307,15 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
     
+@csrf_exempt
+def delete_appliance(request, name):
+    if request.method == 'DELETE':
+        appliance = get_object_or_404(request.user.appliances, name=name)
+        appliance.delete()
+        return JsonResponse({'message': 'Appliance deleted successfully.'})
+    else:
+        return JsonResponse({'error': 'Method not allowed.'}, status=405)
+    
 def get_energy_usage_for_user(request: HttpRequest) -> JsonResponse:
     if request.user.is_authenticated:
         energy_usage = request.user.energy_usage.all()

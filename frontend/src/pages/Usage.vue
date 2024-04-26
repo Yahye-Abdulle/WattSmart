@@ -54,6 +54,7 @@ const closeConfirm = () => {
                             <div class="appliance-details">
                                 <!-- Dynamic appliance name and wattage based on the array -->
                                 <span class="appliance-name">{{ appliance.name }}</span>
+                                <img src="https://cdn-icons-png.freepik.com/256/14025/14025835.png?semt=ais_hybrid" width="17" height="17" @click="deleteAppliance(appliance.name)" style="cursor: pointer;">
                                 <span class="appliance-wattage">{{ appliance.wattage }}W / £{{
                                     calculateCost(appliance.wattage) }}</span>
                                 <div class="progress-bar-container">
@@ -144,6 +145,27 @@ export default defineComponent({
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                });
+        },
+        deleteAppliance(name: string) {
+            const csrfToken = "{{ csrf_token }}";
+
+            fetch('/delete_appliance/'+name, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    name: name
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                console.log('Success:', data);
+                })
+                .catch((error) => {
+                console.error('Error:', error);
                 });
         },
         getCookie(name: string) {
