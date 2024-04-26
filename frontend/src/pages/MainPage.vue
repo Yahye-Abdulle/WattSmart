@@ -294,7 +294,7 @@ export default defineComponent({
         // After logout is complete, hide loading screen
         this.hideLoading();
         window.location.href = '/login/';
-      }, 1000);
+      }, 3000);
 
     },
     showLoading() {
@@ -534,11 +534,13 @@ export default defineComponent({
 
 .loading-overlay {
   position: absolute;
-  top: 0;
+  top: 27%;
   left: 0;
   width: 100%;
-  height: 88%;
-  background-color: rgba(255, 255, 255, 0.8);
+  height: 62%;
+  border-radius: 38px 38px 38px 38px;
+  color: white;
+  background: linear-gradient(180deg, rgba(227, 101, 47, 1) 0%, rgb(65, 63, 63) 75%);
   /* Semi-transparent white background */
   display: flex;
   justify-content: center;
@@ -550,9 +552,10 @@ export default defineComponent({
 .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   /* Light border color */
-  border-top: 4px solid #333;
+  border-top: 4px solid #fff;
   /* Dark border color for spinner */
   border-radius: 50%;
+  margin-left: 10px;
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;

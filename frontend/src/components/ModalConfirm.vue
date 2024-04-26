@@ -1,4 +1,7 @@
 <template>
+  <div class="loading-overlay" v-if="isLoading">Scanning for devices...
+    <div class="loading-spinner"></div>
+  </div>
   <div v-if="showInformationStep" class="absolute inset-0 overflow-y-auto bg-black bg-opacity-50 modalCSS">
     <div class="flex items-start justify-center min-h-screen mt-24 text-center">
       <div class="bg-custom-primary text-white rounded-lg text-center shadow-xl p-6 w-64" role="dialog" aria-modal="true">
@@ -77,11 +80,22 @@ const newAppliance = ref({
 });
 
 const showInformationStep = ref(true);
+const isLoading = ref(false);
 
 const nextStep = () => {
+  showLoading();
   setTimeout(() => {
+    hideLoading();
     showInformationStep.value = false;
-  }, 1500);
+  }, 5000);
+};
+
+const showLoading = () => {
+  isLoading.value = true;
+};
+
+const hideLoading = () => {
+  isLoading.value = false;
 };
 
 const addAppliance = () => {
@@ -153,6 +167,48 @@ const addAppliance = () => {
 .border-custom-button {
   border-color: #E3652F;
   color: #E3652F;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 24%;
+  left: 0;
+  width: 100%;
+  height: 67%;
+  color: white;
+  border-radius: 38px 38px 0px 0px;
+  background: linear-gradient(180deg, rgba(227, 101, 47, 1) 0%, rgb(65, 63, 63) 75%);
+  /* Semi-transparent white background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* Ensure it's on top of other elements */
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  /* Light border color */
+  border-top: 4px solid #ffffff;
+  /* Dark border color for spinner */
+  border-radius: 50%;
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  /* Animation for spinner rotation */
+  z-index: 1001;
+  /* Ensure it's on top of other elements */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 label {
