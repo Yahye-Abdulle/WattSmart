@@ -4,13 +4,15 @@
   </div>
   <div v-if="showInformationStep" class="absolute inset-0 overflow-y-auto bg-black bg-opacity-50 modalCSS">
     <div class="flex items-start justify-center min-h-screen mt-24 text-center">
-      <div class="bg-custom-primary text-white rounded-lg text-center shadow-xl p-6 w-64" role="dialog" aria-modal="true">
+      <div class="bg-custom-primary text-white rounded-lg text-center shadow-xl p-6 w-64" role="dialog"
+        aria-modal="true">
         <h3 class="text-custom-heading">Step 1 / 2</h3>
 
         <div class="mt-4 infostepone">
           <span for="applianceName" class="text-custom-label">
             <p style="font-size: 20px; max-width: 350px; font-weight: 500">Please ensure WiFi is enabled on phone </p>
-            <p style="font-size: 15px; font-weight: 500;">WattSmart will scan using WiFi to add all detected smart home devices</p>  
+            <p style="font-size: 15px; font-weight: 500;">WattSmart will scan using WiFi to add all detected smart home
+              devices</p>
           </span>
         </div>
 
@@ -32,7 +34,8 @@
 
   <div v-else class="absolute inset-0 overflow-y-auto bg-black bg-opacity-50 modalCSS">
     <div class="flex items-start justify-center min-h-screen mt-24 text-center">
-      <div class="bg-custom-primary text-white rounded-lg text-center shadow-xl p-6 w-64" role="dialog" aria-modal="true">
+      <div class="bg-custom-primary text-white rounded-lg text-center shadow-xl p-6 w-64" role="dialog"
+        aria-modal="true">
         <h3 class="text-custom-heading">Step 2 / 2</h3>
 
         <!-- Add Appliance Step
@@ -47,11 +50,12 @@
             <option value="electricity">Electricity</option>
             <option value="gas">Gas</option>
           </select>
-        </div> --> 
+        </div> -->
 
         <div class="mt-4 infostepone">
           <span for="applianceName" class="text-custom-label">
-            <p style="font-size: 20px; max-width: 350px; font-weight: 500">Press button below to add all devices found on the current WiFi</p>
+            <p style="font-size: 20px; max-width: 350px; font-weight: 500">Press button below to add all devices found
+              on the current WiFi</p>
           </span>
         </div>
 
@@ -59,11 +63,12 @@
           <button @click="addAppliance" class="bg-custom-button text-white px-4 py-2 rounded-md">
             Add Devices
           </button>
-          
+
         </div>
-        <button @click="$emit('close')" class="text-custom-button px-4 py-2 rounded-md border border-custom-button">
-            Cancel
-          </button>
+        <button @click="$emit('close')" class="text-custom-button px-4 py-2 rounded-md border border-custom-button"
+          id="closeButton">
+          Cancel
+        </button>
       </div>
     </div>
   </div>
@@ -71,7 +76,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { defineEmits } from 'vue';
+import Swal from 'sweetalert2'
 
 const newAppliance = ref({
   name: '',
@@ -100,7 +105,7 @@ const hideLoading = () => {
 
 const addAppliance = () => {
   const csrfToken = "{{ csrf_token }}";
-  
+
   fetch('/add_appliance/', {
     method: 'POST',
     headers: {
@@ -115,14 +120,24 @@ const addAppliance = () => {
   })
     .then(response => response.json())
     .then(data => {
+      Swal.fire({
+        position: "center",
+        html: '<p>Appliances added successfully</p>',
+        showConfirmButton: false,
+        width: 300,
+        timer: 1000
+      });
       console.log('Success:', data);
     })
     .catch((error) => {
       console.error('Error:', error);
     });
 
-  // Emit the event to close the modal using the context.emit function
-  defineEmits(['close']);
+  var buttonToClose = document.getElementById('closeButton');
+
+  buttonToClose?.click();
+
+  window.location.href = '/';
 };
 </script>
 

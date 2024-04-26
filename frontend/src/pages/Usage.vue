@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import ModalConfirm from "../components/ModalConfirm.vue";
-import { ref} from "vue";
+import { ref } from "vue";
 
 const show = ref(false);
 
 const openConfirm = () => {
-  show.value = true;
+    show.value = true;
 };
 
 const closeConfirm = () => {
-  show.value = false;
+    show.value = false;
 };
 
 </script>
@@ -43,7 +43,7 @@ const closeConfirm = () => {
 
             </div>
             <ModalConfirm v-if="show" @close="closeConfirm"></ModalConfirm>
-            
+
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
                 <!-- List of appliances -->
@@ -54,9 +54,11 @@ const closeConfirm = () => {
                             <div class="appliance-details">
                                 <!-- Dynamic appliance name and wattage based on the array -->
                                 <span class="appliance-name">{{ appliance.name }}</span>
-                                <img src="https://cdn-icons-png.freepik.com/256/14025/14025835.png?semt=ais_hybrid" width="17" height="17" @click="deleteAppliance(appliance.name)" style="cursor: pointer;">
+                                <img src="https://cdn-icons-png.freepik.com/256/14025/14025835.png?semt=ais_hybrid"
+                                    width="17" height="17" @click="deleteAppliance(appliance.name)"
+                                    style="cursor: pointer;">
                                 <span class="appliance-wattage">{{ appliance.wattage }}W / £{{
-                                    calculateCost(appliance.wattage) }}</span>
+                            calculateCost(appliance.wattage) }}</span>
                                 <div class="progress-bar-container">
                                     <!-- Use a dynamic style for the progress bar width -->
                                     <div class="progress-bar"
@@ -70,9 +72,10 @@ const closeConfirm = () => {
         </div>
     </div>
 </template>
-  
+
 <script lang="ts">
 import { defineComponent } from "vue";
+import Swal from 'sweetalert2'
 
 export default defineComponent({
     data() {
@@ -84,12 +87,23 @@ export default defineComponent({
         }
     },
     methods: {
-        calculateCost(wattage: number) {
-        // Add your cost calculation logic here
-        const cost = wattage * 0.15;
+        showAlert(message: string) {
+            // this.$swal('Hello Vue world!!!');
 
-        // Round to two decimal places
-        return Number(cost.toFixed(2));
+            Swal.fire({
+                position: "center",
+                html: '<p>' + message + '</p>',
+                showConfirmButton: false,
+                width: 300,
+                timer: 1000
+            });
+        },
+        calculateCost(wattage: number) {
+            // Add your cost calculation logic here
+            const cost = wattage * 0.15;
+
+            // Round to two decimal places
+            return Number(cost.toFixed(2));
         },
         // Function to calculate progress bar width based on wattage
         calculateProgressBarWidth(wattage: number) {
@@ -150,7 +164,7 @@ export default defineComponent({
         deleteAppliance(name: string) {
             const csrfToken = "{{ csrf_token }}";
 
-            fetch('/delete_appliance/'+name, {
+            fetch('/delete_appliance/' + name, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -162,10 +176,12 @@ export default defineComponent({
             })
                 .then(response => response.json())
                 .then(data => {
-                console.log('Success:', data);
+                    this.showAlert("Appliance Deleted Successfully!");
+                    console.log('Success:', data);
+                    this.getAppliance_USER();
                 })
                 .catch((error) => {
-                console.error('Error:', error);
+                    console.error('Error:', error);
                 });
         },
         getCookie(name: string) {
@@ -182,7 +198,7 @@ export default defineComponent({
     }
 })
 </script>
-  
+
 <style scoped>
 .iphone-container {
     display: flex;
@@ -343,12 +359,14 @@ export default defineComponent({
     max-width: 350px;
     margin-left: 10px;
     overflow-y: auto;
-    max-height: 450px; /* Set a fixed height for scrolling */
+    max-height: 450px;
+    /* Set a fixed height for scrolling */
 }
 
 /* Hide scrollbar */
 .appliance-container::-webkit-scrollbar {
-    width: 0; /* Set the width of the scrollbar to zero */
+    width: 0;
+    /* Set the width of the scrollbar to zero */
 }
 
 .appliance-list {
@@ -367,4 +385,5 @@ export default defineComponent({
     font-size: 13px;
     font-weight: 600;
     line-height: normal;
-}</style>
+}
+</style>

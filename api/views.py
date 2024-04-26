@@ -279,9 +279,9 @@ def add_appliance(request: HttpRequest) -> JsonResponse:
         
         num_appliances = random.randint(7, 10)
         
-        selected_gas_appliances = random.sample([appliance for appliance in appliances if appliance['type'] == 'gas'], random.randint(1, 3))
+        # selected_gas_appliances = random.sample([appliance for appliance in appliances if appliance['type'] == 'gas'], random.randint(1, 3))
         
-        selected_appliances = random.sample(appliances, num_appliances) + selected_gas_appliances
+        selected_appliances = random.sample(appliances, num_appliances)
 
         for appliance in selected_appliances:
             name = appliance['name']
