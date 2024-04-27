@@ -9,6 +9,11 @@
             </form> -->
             <div class="main">
                 <input type="checkbox" id="chk" aria-hidden="true">
+                <label class="switch">
+                    <input type="checkbox" id="TTSStatus">
+                    <span class="slider round"></span>
+                  </label>
+                  <p class="sliderText">Toggle Text-To-Speech</p>
 
                 <div class="signup">
                     <form method="post" action="{% url 'signup' %}">
@@ -51,7 +56,10 @@
             input.addEventListener('click', function () {
                 var text = input.getAttribute('placeholder');
                 if (text != null) {
-                    speak(text);
+                    var getCheckbox = document.getElementById('TTSStatus');
+                    if (getCheckbox.checked) {
+                        speak(text);
+                    }
                 }
             });
         });
@@ -327,5 +335,75 @@
   position: relative;
   left: -35px;
   content: "✖";
+}
+
+.sliderText {
+    position: absolute;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  top: 1.55%;
+  left: 7%;
+}
+
+.switch {
+  position: absolute;
+  top: -40;   
+  left: 0;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>
