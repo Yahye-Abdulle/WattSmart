@@ -211,6 +211,7 @@ def check_auth(request) -> JsonResponse:
 def get_appliances_for_user(request: HttpRequest) -> JsonResponse:
     if request.user.is_authenticated:
         appliances = request.user.appliances.all()
+        appliances = appliances.order_by('wattage').reverse()
         return JsonResponse({'appliances': list(appliances.values())})
     else:
         return JsonResponse({'error': 'User is not authenticated.'}, status=401)
