@@ -5,7 +5,6 @@
   <div class="iphone-container">
     <div class="home-content">
       <div class="top-banner">
-        <!-- Logout Button Added -->
         <img src="../assets/logout.png" alt="Logout Image" @click="logout" class="logout-button">
 
         <svg xmlns="http://www.w3.org/2000/svg" width="373" height="189" viewBox="0 0 373 189" fill="none">
@@ -105,13 +104,13 @@ export default defineComponent({
           {
             label: 'Electric',
             data: this.generateElectricityData(currentMonth),
-            backgroundColor: 'rgba(227, 101, 47, 0.90)', // Red color for gas
+            backgroundColor: 'rgba(227, 101, 47, 0.90)', 
             stack: 'stack1'
           },
           {
             label: 'Gas',
             data: this.generateGasData(currentMonth),
-            backgroundColor: 'rgba(0, 69, 107, 0.90)', // Blue color for electricity
+            backgroundColor: 'rgba(0, 69, 107, 0.90)', 
             stack: 'stack1'
           }
         ]
@@ -122,9 +121,9 @@ export default defineComponent({
           x: {
             stacked: true,
             ticks: {
-              color: 'rgba(227, 101, 47, 0.90)', // Set x-axis text color to black
+              color: 'rgba(227, 101, 47, 0.90)', 
               font: {
-                weight: 'bold' // Set legend text font weight to bold
+                weight: 'bold' 
               }
             }
           },
@@ -133,8 +132,8 @@ export default defineComponent({
             ticks: {
               color: 'rgba(0, 69, 107, 0.90)',
               font: {
-                weight: 'bold' // Set legend text font weight to bold
-              } // Set x-axis text color to black
+                weight: 'bold' 
+              }
             }
           }
         },
@@ -158,9 +157,9 @@ export default defineComponent({
           },
           legend: {
             labels: {
-              color: 'white', // Set legend text color to black
+              color: 'white', 
               font: {
-                weight: 'bold' // Set legend text font weight to bold
+                weight: 'bold' 
               }
             }
 
@@ -185,8 +184,6 @@ export default defineComponent({
           const gasSum = gasUsage.reduce((total, wattage) => total + wattage, 0);
           const gasCost = this.calculateCost(gasSum);
           this.gasData = gasCost;
-          // return gasCost;
-          // return gasUsage.map(wattage => this.calculateCost(wattage));
         })
         .catch(error => {
           console.error('Error:', error);
@@ -195,7 +192,7 @@ export default defineComponent({
         const gasUsage = [];
         for (let i = 0; i < 12; i++) {
           const randomFactor = Math.random() * (1.09 - 0.97) + 0.97; 
-          const randomUsage = this.gasTotalSum * randomFactor; // Generate a random number between 1 and 100
+          const randomUsage = this.gasTotalSum * randomFactor;
           gasUsage.push(randomUsage);
         }
         return gasUsage.map(wattage => this.calculateCost(wattage));
@@ -211,28 +208,23 @@ export default defineComponent({
           const electricSum = electricityUsage.reduce((total, wattage) => total + wattage, 0);
           const electricCost = this.calculateCost(electricSum);
           this.electricityData = electricCost;
-          // return electricCost;
-          // return electricityUsage.map(wattage => this.calculateCost(wattage));
         })
         .catch(error => {
           console.error('Error:', error);
         });
 
-        // const electricityUsage = [312, 260, 250, 215, 180, 240, 150, 142, 200, 370, 350, 255];
-        this.electricityTotalSum = Math.random() * (300 - 150) + 150; // Generate a random number between 50 and 100
+        this.electricityTotalSum = Math.random() * (300 - 150) + 150; 
         const electricityUsage = [];
         for (let i = 0; i < 12; i++) {
           const randomFactor = Math.random() * (1.20 - 0.875) + 0.875; 
-          const randomUsage = this.electricityTotalSum * randomFactor; // Generate a random number between 1 and 100
+          const randomUsage = this.electricityTotalSum * randomFactor; 
           electricityUsage.push(randomUsage);
         }
         return electricityUsage.map(wattage => this.calculateCost(wattage));
     },
     calculateCost(wattage: any) {
-      // Add your cost calculation logic here
-      const cost = wattage * 0.15; // Assuming $1.5 per kWh
+      const cost = wattage * 0.15; 
 
-      // Round to two decimal places
       return Number(cost.toFixed(2));
     },
     checkAuthStatus() {
@@ -253,33 +245,12 @@ export default defineComponent({
         .then(data => {
           this.appliancesList = data.appliances;
 
-          // set appliance with most usage to mostUsedAppliance, straight here, no method needed
           this.appliancesList.sort((a: { wattage: any; }, b: { wattage: any; }) => b.wattage - a.wattage);
 
-          // Set the mostUsedAppliance to the first element (index 0) of the sorted array
           this.mostUsedAppliance = (this.appliancesList[0] as { name: string }).name;
 
           this.energyUsage = this.appliancesList.reduce((total: any, appliance: { wattage: any; }) => total + appliance.wattage, 0);
           this.costPrice = Number(((this.energyUsage / 1000) * 1.5).toFixed(2));
-
-          // let eArray: number[] = [];
-          // let gArray: number[] = [];
-
-          // this.appliancesList.forEach((appliance: { type: string; wattage: any; }) => {
-          //   // Check the type of the appliance
-          //   if (appliance.type === 'electricity') {
-          //     // If it's electricity, add its wattage to electricityData
-          //     eArray.push(appliance.wattage);
-          //   } else if (appliance.type === 'gas') {
-          //     // If it's gas, add its wattage to gasData
-          //     gArray.push(appliance.wattage);
-          //   }
-          // });
-
-
-          // this.electricityData = this.calculateCost(eArray.reduce((total, wattage) => total + wattage, 0));
-          // this.gasData = this.calculateCost(gArray.reduce((total, wattage) => total + wattage, 0));
-
         })
         .catch(error => {
           console.error('Error:', error);
@@ -289,9 +260,7 @@ export default defineComponent({
       this.showLoading();
 
       setTimeout(() => {
-        // Perform logout action here
 
-        // After logout is complete, hide loading screen
         this.hideLoading();
         window.location.href = '/login/';
       }, 3000);
@@ -318,17 +287,13 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 100vh; Use full viewport height */
 }
 
 .iphone {
   width: 375px;
-  /* iPhone X width */
   height: 812px;
-  /* iPhone X height */
   background-color: #fff;
   border-radius: 39px;
-  /* iPhone X border radius */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   display: flex;
@@ -340,9 +305,7 @@ export default defineComponent({
   width: calc(100% - 20px);
   height: calc(100% - 20px);
   border: 5px solid #ccc;
-  /* Add inner border */
   border-radius: 29px;
-  /* Adjust border-radius to match inner part */
   overflow: hidden;
   position: relative;
 }
@@ -392,15 +355,12 @@ export default defineComponent({
 
 .banner-overlay img {
   width: 50%;
-  /* Adjust image size */
   height: 15%;
-  /* Adjust image size */
 }
 
 .text-overlay {
   text-align: center;
   color: #fff;
-  /* Adjust text color */
 }
 
 .usage-count {
@@ -450,19 +410,14 @@ export default defineComponent({
 
 .applianceMostUsage {
   width: calc(100% - 5%);
-  /* Adjust width as needed */
   height: 50px;
-  /* Adjust height as needed */
   border-radius: 20px;
   background-color: rgba(227, 101, 47, 0.90);
-  /* Background color */
   margin: 25px auto 0;
-  /* Center horizontally and set top margin */
   display: flex;
   justify-content: center;
   align-items: center;
   color: #FFF;
-  /* Text color */
   font-weight: bold;
 }
 
@@ -482,7 +437,6 @@ export default defineComponent({
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   position: relative;
-  /* Add relative positioning */
   color: #FFF;
 }
 
@@ -493,9 +447,7 @@ export default defineComponent({
   left: 0;
   right: 0;
   height: 1px;
-  /* Adjust the height as needed */
   background-color: rgba(0, 69, 107, 0.90);
-  /* Adjust the line color as needed */
 }
 
 .top-left {
@@ -517,19 +469,12 @@ export default defineComponent({
 .logout-button {
   position: absolute;
   right: 10px;
-  /* Adjusts the distance from the right edge */
   top: 34px;
-  /* Adjusts the distance from the top edge */
   cursor: pointer;
-  /* Changes the cursor to a pointer when hovering over the image */
   width: 30px;
-  /* Adjust the width as necessary */
   height: 30px;
-  /* Adjust the height as necessary */
   cursor: pointer;
-  /* Ensures the cursor changes to a pointer when hovering the image */
   z-index: 100;
-  /* Ensure it's on top if other elements are interfering */
 }
 
 .loading-overlay {
@@ -541,27 +486,21 @@ export default defineComponent({
   border-radius: 38px 38px 38px 38px;
   color: white;
   background: linear-gradient(180deg, rgba(227, 101, 47, 1) 0%, rgb(65, 63, 63) 75%);
-  /* Semi-transparent white background */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* Ensure it's on top of other elements */
 }
 
 .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  /* Light border color */
   border-top: 4px solid #fff;
-  /* Dark border color for spinner */
   border-radius: 50%;
   margin-left: 10px;
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
-  /* Animation for spinner rotation */
   z-index: 1001;
-  /* Ensure it's on top of other elements */
 }
 
 @keyframes spin {

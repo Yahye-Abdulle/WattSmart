@@ -1,6 +1,5 @@
 <template>
     <div class="iphone-container">
-        <!-- Your Home Page Content -->
         <div class="home-content">
             <div class="center">
                 <div class="chat">
@@ -19,10 +18,8 @@
                         </div>
                     </div>
                     <div class="input">
-                        <!-- Input field with event listener for Enter key press -->
                         <input placeholder="Type your message here!" v-model="newMessage" @keyup.enter="sendMessage"
                             type="text" />
-                        <!-- Send message button -->
                         <button class="button-13" role="button" @click="sendMessage">Send</button>
                     </div>
                 </div>
@@ -38,9 +35,6 @@ interface Message {
     role: 'user' | 'ai';
     content: string;
 }
-
-// var chat = document.getElementById('chat');
-// chat.scrollTop = chat.scrollHeight - chat.clientHeight;
 
 export default defineComponent({
     data() {
@@ -70,7 +64,6 @@ export default defineComponent({
                     console.log(data);
                     
                     this.messages = data.conversation_history.slice(1);
-                    // Automatically scroll chat to the latest message
                     this.$nextTick(() => {
                         const chatContainer = this.$el.querySelector("#chat");
                         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -91,12 +84,10 @@ export default defineComponent({
             this.newMessage = '';
         },
         sendToServer(message: string) {
-            // Example API call to your Django backend
             fetch('/send_message/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Include other headers as needed, like authorization tokens
                 },
                 body: JSON.stringify({ message: message }),
             })
@@ -106,9 +97,8 @@ export default defineComponent({
 
                     this.messages.push({
                         role: 'ai',
-                        content: data.message, // Assuming your backend returns a JSON with the AI's response
+                        content: data.message,
                     });
-                    // Automatically scroll chat to the latest message
                     this.$nextTick(() => {
                         const chatContainer = this.$el.querySelector("#chat");
                         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -394,19 +384,14 @@ html {
 .iphone-container {
     display: flex;
     justify-content: center;
-    /* align-items: center; */
     height: 100vh;
-    /* Use full viewport height */
 }
 
 .iphone {
     width: 375px;
-    /* iPhone X width */
     height: 812px;
-    /* iPhone X height */
     background-color: #fff;
     border-radius: 39px;
-    /* iPhone X border radius */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     display: flex;
@@ -418,9 +403,7 @@ html {
     width: calc(100% - 20px);
     height: calc(100% - 20px);
     border: 5px solid #ccc;
-    /* Add inner border */
     border-radius: 29px;
-    /* Adjust border-radius to match inner part */
     overflow: hidden;
     position: relative;
 }

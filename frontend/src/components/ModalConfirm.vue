@@ -38,20 +38,6 @@
         aria-modal="true">
         <h3 class="text-custom-heading">Step 2 / 2</h3>
 
-        <!-- Add Appliance Step
-        <div class="mt-4">
-          <label for="applianceWattage" class="text-custom-label">Give a name for appliance:</label>
-          <input type="text" id="applianceName" v-model="newAppliance.name" class="border border-gray-400 p-2 w-full" placeholder="Name of appliance"/>
-        </div>
-
-        <div class="mt-4">
-          <label for="applianceType" class="text-custom-label">Select appliance type:</label>
-          <select v-model="newAppliance.type" id="applianceType" class="border border-gray-400 p-2 w-full">
-            <option value="electricity">Electricity</option>
-            <option value="gas">Gas</option>
-          </select>
-        </div> -->
-
         <div class="mt-4 infostepone">
           <span for="applianceName" class="text-custom-label">
             <p style="font-size: 20px; max-width: 350px; font-weight: 500">Press button below to add all devices found
@@ -193,27 +179,21 @@ const addAppliance = () => {
   color: white;
   border-radius: 38px 38px 0px 0px;
   background: linear-gradient(180deg, rgba(227, 101, 47, 1) 0%, rgb(65, 63, 63) 75%);
-  /* Semi-transparent white background */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* Ensure it's on top of other elements */
 }
 
 .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  /* Light border color */
   border-top: 4px solid #ffffff;
-  /* Dark border color for spinner */
   border-radius: 50%;
   margin-left: 10px;
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
-  /* Animation for spinner rotation */
   z-index: 1001;
-  /* Ensure it's on top of other elements */
 }
 
 @keyframes spin {

@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     age = models.DateField(null=True, blank=True)
     
-    has_setup = models.BooleanField(default=False)  # Add this field
+    has_setup = models.BooleanField(default=False)
     
     objects = CustomUserManager()
 

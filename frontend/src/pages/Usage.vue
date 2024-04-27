@@ -46,13 +46,10 @@ const closeConfirm = () => {
 
             <!-- MAIN CONTENT -->
             <div class="bottom-banner">
-                <!-- List of appliances -->
                 <div class="appliance-container">
                     <div class="appliance-list">
-                        <!-- Use v-for to iterate over the appliances array -->
                         <div v-for="(appliance, index) in appliances" :key="index" class="appliance-item">
                             <div class="appliance-details">
-                                <!-- Dynamic appliance name and wattage based on the array -->
                                 <span class="appliance-name">{{ appliance.name }}</span>
                                 <img src="https://cdn-icons-png.freepik.com/256/14025/14025835.png?semt=ais_hybrid"
                                     width="17" height="17" @click="deleteAppliance(appliance.name)"
@@ -60,7 +57,6 @@ const closeConfirm = () => {
                                 <span class="appliance-wattage">{{ appliance.wattage }}W / £{{
                             calculateCost(appliance.wattage) }}</span>
                                 <div class="progress-bar-container">
-                                    <!-- Use a dynamic style for the progress bar width -->
                                     <div class="progress-bar"
                                         :style="{ width: calculateProgressBarWidth(appliance.wattage) }"></div>
                                 </div>
@@ -88,8 +84,6 @@ export default defineComponent({
     },
     methods: {
         showAlert(message: string) {
-            // this.$swal('Hello Vue world!!!');
-
             Swal.fire({
                 position: "center",
                 html: '<p>' + message + '</p>',
@@ -99,16 +93,13 @@ export default defineComponent({
             });
         },
         calculateCost(wattage: number) {
-            // Add your cost calculation logic here
             const cost = wattage * 0.15;
 
             // Round to two decimal places
             return Number(cost.toFixed(2));
         },
-        // Function to calculate progress bar width based on wattage
         calculateProgressBarWidth(wattage: number) {
-            // Calculate the width based on your desired logic
-            return `${(wattage / this.totalWatts) * 100}%`; // Example calculation (adjust as needed)
+            return `${(wattage / this.totalWatts) * 100}%`; 
         },
         checkAuthStatus() {
             fetch('/check_auth/')
@@ -122,31 +113,6 @@ export default defineComponent({
                     console.error('Error:', error);
                 });
         },
-        // addAppliance_POST() {
-        //     console.log('Add Appliance');
-
-        //     const csrfToken = "{{ csrf_token }}";
-
-        //     fetch('/add_appliance/', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'X-CSRFToken': csrfToken,
-        //         },
-        //         body: JSON.stringify({
-        //             name: 'Microwave',
-        //             wattage: 1000,
-        //         })
-        //     })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             console.log('Success:', data);
-        //         })
-        //         .catch((error) => {
-        //             console.error('Error:', error);
-        //         });
-
-        // },
         getAppliance_USER() {
             fetch('/get_appliances/')
                 .then(response => response.json())
@@ -204,17 +170,13 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     align-items: center;
-    /* height: 100vh; Use full viewport height */
 }
 
 .iphone {
     width: 375px;
-    /* iPhone X width */
     height: 812px;
-    /* iPhone X height */
     background-color: #fff;
     border-radius: 39px;
-    /* iPhone X border radius */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     display: flex;
@@ -226,9 +188,7 @@ export default defineComponent({
     width: calc(100% - 20px);
     height: calc(100% - 20px);
     border: 5px solid #ccc;
-    /* Add inner border */
     border-radius: 29px;
-    /* Adjust border-radius to match inner part */
     overflow: hidden;
     position: relative;
 }
@@ -278,15 +238,12 @@ export default defineComponent({
 
 .banner-overlay img {
     width: 50%;
-    /* Adjust image size */
     height: 15%;
-    /* Adjust image size */
 }
 
 .text-overlay {
     text-align: center;
     color: #fff;
-    /* Adjust text color */
 }
 
 .usage-count {
@@ -324,7 +281,6 @@ export default defineComponent({
 }
 
 .add-appliance-button {
-    /* Style the button center and smaller */
     display: block;
     margin: 0 auto;
     margin-top: 25px;
@@ -360,13 +316,11 @@ export default defineComponent({
     margin-left: 10px;
     overflow-y: auto;
     max-height: 450px;
-    /* Set a fixed height for scrolling */
 }
 
 /* Hide scrollbar */
 .appliance-container::-webkit-scrollbar {
     width: 0;
-    /* Set the width of the scrollbar to zero */
 }
 
 .appliance-list {
@@ -380,7 +334,6 @@ export default defineComponent({
 }
 
 .appliance-wattage {
-    /* Style the text next far right above progress bar */
     float: right;
     font-size: 13px;
     font-weight: 600;

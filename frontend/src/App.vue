@@ -33,18 +33,13 @@ export default defineComponent({
     align-items: center;
     height: 100vh;
     background-color: #096192;
-    
-    /* Use full viewport height */
 }
 
 .iphone {
     width: 403px;
-    /* iPhone X width */
     height:812px;
-    /* iPhone X height */
     background: #303032;
     border-radius: 35px;
-    /* iPhone X border radius */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     display: flex;
@@ -56,9 +51,7 @@ export default defineComponent({
     width: calc(100% - 20px);
     height: calc(100% - 20px);
     border: 5px solid #303032;
-    /* Add inner border */
     border-radius: 35px;
-    /* Adjust border-radius to match inner part */
     overflow: hidden;
     position: relative;
     background: linear-gradient(190deg, #00456B 0.99%, #00456B 125.25%);
