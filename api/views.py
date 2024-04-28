@@ -101,7 +101,6 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
             '''}]
             #conversation_history
         )
-        print(response.choices[0].message)
         if response.choices:
             ai_response = remove_markdown(response.choices[0].message.content).strip()
             conversation_history.append({'role': 'ai', 'content': ai_response})
