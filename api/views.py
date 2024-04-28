@@ -90,9 +90,18 @@ def gptResponses(request: HttpRequest) -> JsonResponse:
         conversation_history.append({'role': 'user', 'content': message})
         response = client.chat.completions.create(
             model="gpt-3.5-turbo", #gpt-4-32k-0613
-            messages=conversation_history
+            messages=[{"role": "user", "content": '''
+            instructions: ''' + initial_message + '''
+            
+            question: ''' + message + '''
+            
+            Answer in 30 word maximum and keep the response clear and concise.
+            If question is not relevant to energy sector, respond with a message that the question is not relevant.
+            Return the answer only
+            '''}]
+            #conversation_history
         )
-        
+        print(response.choices[0].message)
         if response.choices:
             ai_response = remove_markdown(response.choices[0].message.content).strip()
             conversation_history.append({'role': 'ai', 'content': ai_response})
